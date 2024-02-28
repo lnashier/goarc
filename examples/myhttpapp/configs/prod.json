@@ -1,0 +1,17 @@
+{
+  "name": "myhttpapp",
+  "server": {
+    "port": 8080,
+    "shutdown": {
+      "gracetime": 1
+    }
+  },
+  "log": {
+    "network": true,
+    "app": {
+      "debug": false,
+      "info": true,
+      "error": true
+    }
+  }
+}
