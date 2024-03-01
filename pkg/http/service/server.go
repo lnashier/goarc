@@ -20,7 +20,8 @@ type Server struct {
 	router           *mux.Router
 	preempt          *negroni.Negroni
 	healthController *healthController
-	services         []Service
+	components       []Component
+	exitCh           chan struct{}
 }
 
 func NewServer(cfg *config.Config) *Server {
@@ -39,6 +40,7 @@ func NewServer(cfg *config.Config) *Server {
 		preempt:          preempt,
 		router:           mux.NewRouter(),
 		healthController: newHealthController(),
+		exitCh:           make(chan struct{}),
 	}
 }
 
@@ -71,14 +73,16 @@ func (s *Server) Stop() {
 	log.Info("Server#Stop enter")
 	defer log.Info("Server#Stop exit")
 
+	close(s.exitCh)
+
 	log.Info("Server#Stop server status set to down")
 	s.healthController.setStatusDown()
 
 	// Stop any long-running services within the app
-	if len(s.services) > 0 {
-		for _, sr := range s.services {
-			if err := sr.Stop(); err != nil {
-				log.Info("Server#Stop failed to stop a running service: %v", err)
+	if len(s.components) > 0 {
+		for _, comp := range s.components {
+			if err := comp.Stop(); err != nil {
+				log.Info("Server#Stop failed to stop a running component: %v", err)
 			}
 		}
 	}
@@ -122,7 +126,10 @@ func (s *Server) setupBuildInfoEndpoints() {
 // preHandlers can be optionally supplied, they will run before routeHandler in the order supplied
 func (s *Server) Register(path, method string, routeHandler http.Handler, preHandlers ...negroni.Handler) {
 	chain := negroni.New(preHandlers...)
-	chain.UseHandler(routeHandler)
+	chain.UseHandler(&reject{
+		h:    routeHandler,
+		done: s.exitCh,
+	})
 	path = "/" + strings.TrimLeft(path, "/")
 	if err := s.router.Handle(path, chain).Methods(method).GetError(); err != nil {
 		log.Panic("Server#Register error %v building route for %v", err.Error(), path)
@@ -130,7 +137,7 @@ func (s *Server) Register(path, method string, routeHandler http.Handler, preHan
 	log.Info("Server#Register route [%v]%v registered", method, path)
 }
 
-// Service registers service that will run within the app that requires stopping when server shuts down
-func (s *Server) Service(sr Service) {
-	s.services = append(s.services, sr)
+// Component registers a Component that will run within the app that requires stopping when server shuts down
+func (s *Server) Component(comp Component) {
+	s.components = append(s.components, comp)
 }

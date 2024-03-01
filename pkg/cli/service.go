@@ -66,7 +66,7 @@ func (s *Service) Start() error {
 func (s *Service) Stop() error {
 	log.Info("Service#Stop enter")
 	defer log.Info("Service#Stop exit")
-	s.exitCh <- struct{}{}
+	close(s.exitCh)
 	return nil
 }
 
