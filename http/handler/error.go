@@ -1,8 +1,8 @@
 package handler
 
 import (
-	chttp "github.com/lnashier/go-app/pkg/http"
-	"github.com/lnashier/go-app/pkg/zson"
+	chttp "github.com/lnashier/go-app/http"
+	"github.com/lnashier/go-app/zson"
 	"net/http"
 )
 

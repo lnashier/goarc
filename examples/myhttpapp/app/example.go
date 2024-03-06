@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"errors"
 	"github.com/gorilla/mux"
-	chttp "github.com/lnashier/go-app/pkg/http"
+	chttp "github.com/lnashier/go-app/http"
 	"net/http"
 )
 

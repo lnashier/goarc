@@ -1,7 +1,7 @@
-package cli
+package service
 
 import (
-	"github.com/lnashier/go-app/pkg/config"
+	"github.com/lnashier/go-app/config"
 )
 
 type Opt func(*opts)
@@ -9,7 +9,7 @@ type Opt func(*opts)
 type opts struct {
 	cfg *config.Config
 	//logger *log.Logger TODO
-	apps []func(*config.Config, *Service) error
+	apps []func(*config.Config, *Server) error
 }
 
 func (s *opts) applyOptions(opts []Opt) {
@@ -20,7 +20,7 @@ func (s *opts) applyOptions(opts []Opt) {
 
 func defaultOpts() *opts {
 	return &opts{
-		apps: []func(*config.Config, *Service) error{},
+		apps: []func(*config.Config, *Server) error{},
 	}
 }
 
@@ -30,7 +30,7 @@ func WithConfig(cfg *config.Config) Opt {
 	}
 }
 
-/*TODO
+/* TODO
 // WithLogger
 func WithLogger(logger *log.Logger) Opt {
 	return func(s *opts) {
@@ -39,7 +39,7 @@ func WithLogger(logger *log.Logger) Opt {
 }
 */
 
-func WithApp(app ...func(*config.Config, *Service) error) Opt {
+func WithApp(app ...func(*config.Config, *Server) error) Opt {
 	return func(s *opts) {
 		s.apps = append(s.apps, app...)
 	}

@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"github.com/lnashier/go-app/pkg/zson"
+	"github.com/lnashier/go-app/zson"
 	"net/http"
 )
 
