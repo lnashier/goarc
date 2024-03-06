@@ -1,9 +1,9 @@
 package app
 
 import (
-	"github.com/lnashier/go-app/pkg/config"
-	"github.com/lnashier/go-app/pkg/http/handler"
-	"github.com/lnashier/go-app/pkg/http/service"
+	"github.com/lnashier/go-app/config"
+	"github.com/lnashier/go-app/http/handler"
+	"github.com/lnashier/go-app/http/service"
 	"net/http"
 )
 

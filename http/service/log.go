@@ -2,7 +2,7 @@ package service
 
 import (
 	"bufio"
-	"github.com/lnashier/go-app/pkg/log"
+	"github.com/lnashier/go-app/log"
 	"net"
 	"net/http"
 	"time"
