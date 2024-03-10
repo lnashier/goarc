@@ -1,5 +1,5 @@
 {
-  "name": "myhttpapp",
+  "name": "httpapp",
   "server": {
     "port": 8080,
     "shutdown": {
@@ -9,7 +9,7 @@
   "log": {
     "network": true,
     "app": {
-      "debug": false,
+      "debug": true,
       "info": true,
       "error": true
     }

@@ -1,9 +1,9 @@
 {
-  "name": "myhttpapp",
+  "name": "httpapp",
   "server": {
     "port": 8080,
     "shutdown": {
-      "gracetime": 100
+      "gracetime": 1
     }
   },
   "log": {

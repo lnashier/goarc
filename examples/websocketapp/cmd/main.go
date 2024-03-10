@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/lnashier/go-app/config"
 	"github.com/lnashier/go-app/http/service"
-	"myhttpapp/app"
+	"websocketapp/internal/app"
 )
 
 func main() {
