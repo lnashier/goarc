@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/gorilla/websocket v1.5.1
-	github.com/lnashier/goarc v0.3.0
+	github.com/lnashier/goarc v0.4.0
 )
 
 require (
