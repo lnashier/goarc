@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/gorilla/mux v1.8.1
-	github.com/lnashier/go-app v0.3.0
+	github.com/lnashier/goarc v0.3.0
 )
 
 require (

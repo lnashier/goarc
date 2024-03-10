@@ -2,7 +2,7 @@ package cli
 
 import (
 	"fmt"
-	"github.com/lnashier/go-app/log"
+	"github.com/lnashier/goarc/log"
 	"os"
 	"os/signal"
 	"strings"

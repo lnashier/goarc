@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
-	"github.com/lnashier/go-app/env"
+	"github.com/lnashier/goarc/env"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"io"

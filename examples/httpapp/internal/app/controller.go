@@ -1,6 +1,6 @@
 package app
 
-import "github.com/lnashier/go-app/config"
+import "github.com/lnashier/goarc/config"
 
 type Controller struct {
 	cfg   *config.Config

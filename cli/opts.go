@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"github.com/lnashier/go-app/config"
+	"github.com/lnashier/goarc/config"
 )
 
 type Opt func(*opts)

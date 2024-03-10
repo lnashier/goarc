@@ -1,6 +1,6 @@
-module github.com/lnashier/go-app
+module github.com/lnashier/goarc
 
-go 1.21.1
+go 1.22
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0

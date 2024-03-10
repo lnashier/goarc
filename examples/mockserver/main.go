@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
-	"github.com/lnashier/go-app/config"
-	"github.com/lnashier/go-app/env"
-	chandler "github.com/lnashier/go-app/http/handler"
-	"github.com/lnashier/go-app/http/service"
-	"github.com/lnashier/go-app/log"
-	"github.com/lnashier/go-app/zson"
+	"github.com/lnashier/goarc/config"
+	"github.com/lnashier/goarc/env"
+	chandler "github.com/lnashier/goarc/http/handler"
+	"github.com/lnashier/goarc/http/service"
+	"github.com/lnashier/goarc/log"
+	"github.com/lnashier/goarc/zson"
 	"net/http"
 )
 

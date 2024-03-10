@@ -4,9 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/lnashier/go-app/buildinfo"
-	"github.com/lnashier/go-app/config"
-	"github.com/lnashier/go-app/log"
+	"github.com/lnashier/goarc/buildinfo"
+	"github.com/lnashier/goarc/config"
+	"github.com/lnashier/goarc/log"
 	"github.com/spf13/cobra"
 )
 

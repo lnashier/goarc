@@ -2,7 +2,7 @@ package echo
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/lnashier/go-app/log"
+	"github.com/lnashier/goarc/log"
 	"math"
 	"strconv"
 	"sync"

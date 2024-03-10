@@ -1,8 +1,8 @@
 package buildinfo
 
 import (
-	"github.com/lnashier/go-app/env"
-	"github.com/lnashier/go-app/zson"
+	"github.com/lnashier/goarc/env"
+	"github.com/lnashier/goarc/zson"
 	"net/http"
 	"time"
 )

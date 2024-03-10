@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/lnashier/go-app/config"
-	"github.com/lnashier/go-app/http/service"
+	"github.com/lnashier/goarc/config"
+	"github.com/lnashier/goarc/http/service"
 	"httpapp/internal/app"
 )
 

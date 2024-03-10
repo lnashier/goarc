@@ -2,7 +2,7 @@ module encoder
 
 go 1.22.0
 
-require github.com/lnashier/go-app v0.3.0
+require github.com/lnashier/goarc v0.3.0
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect

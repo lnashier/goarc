@@ -5,9 +5,9 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/lnashier/go-app/cli"
-	"github.com/lnashier/go-app/config"
-	"github.com/lnashier/go-app/log"
+	"github.com/lnashier/goarc/cli"
+	"github.com/lnashier/goarc/config"
+	"github.com/lnashier/goarc/log"
 )
 
 func main() {

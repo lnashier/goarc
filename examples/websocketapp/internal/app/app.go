@@ -2,10 +2,10 @@ package app
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/lnashier/go-app/config"
-	chttp "github.com/lnashier/go-app/http"
-	chandler "github.com/lnashier/go-app/http/handler"
-	"github.com/lnashier/go-app/http/service"
+	"github.com/lnashier/goarc/config"
+	chttp "github.com/lnashier/goarc/http"
+	chandler "github.com/lnashier/goarc/http/handler"
+	"github.com/lnashier/goarc/http/service"
 	"net/http"
 	"time"
 	"websocketapp/internal/app/echo"
