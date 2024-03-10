@@ -46,7 +46,7 @@ func main() {
 }
 
 func GetConfig() *config.Config {
-	cfg, err := config.Loaded(config.NewCustomWatchedPath("configs", env.Get().String(), func(e fsnotify.Event) {
+	cfg, err := config.Loaded(config.NewCustomWatchedPath("./", env.Get().String(), func(e fsnotify.Event) {
 		log.Info("config file updated: %s", e.String())
 	}))
 	if err != nil {

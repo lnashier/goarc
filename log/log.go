@@ -15,15 +15,15 @@ type Type string
 type Level string
 
 const (
-	// DebugLevel
+	// DebugLevel ...
 	// Don't use it unless you're really debugging.
 	// You don't want to see log.Debug in your code once debugged.
 	DebugLevel Level = "DEBUG"
-	// InfoLevel
+	// InfoLevel ...
 	// Use it a lot and share information about your function status.
 	// Every good thing begins with a positive intention and blossoms through thoughtful actions and perseverance.
 	InfoLevel Level = "INFO"
-	// ErrorLevel
+	// ErrorLevel ...
 	// Use it whenever you do:
 	// if err != nil {
 	//		return err

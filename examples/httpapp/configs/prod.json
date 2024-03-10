@@ -1,7 +1,7 @@
 {
-  "name": "mockserver",
+  "name": "httpapp",
   "server": {
-    "port": 8090,
+    "port": 8080,
     "shutdown": {
       "gracetime": 1
     }
@@ -9,7 +9,7 @@
   "log": {
     "network": true,
     "app": {
-      "debug": true,
+      "debug": false,
       "info": true,
       "error": true
     }

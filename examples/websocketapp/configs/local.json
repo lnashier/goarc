@@ -1,5 +1,5 @@
 {
-  "name": "myhttpapp",
+  "name": "websocketapp",
   "server": {
     "port": 8080,
     "shutdown": {
