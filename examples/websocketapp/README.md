@@ -3,8 +3,8 @@
 # Build & Run
 
 ```shell
-go build -o ./bin/mywebsocketapp ./cmd
-./bin/mywebsocketapp
+go build -o ./bin/websocketapp ./cmd
+./bin/websocketapp
 ```
 
 # Run

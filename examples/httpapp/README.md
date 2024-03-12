@@ -3,8 +3,8 @@
 # Build & Run
 
 ```shell
-go build -o ./bin/myhttpapp ./cmd
-./bin/myhttpapp
+go build -o ./bin/httpapp ./cmd
+./bin/httpapp
 ```
 
 # Run
