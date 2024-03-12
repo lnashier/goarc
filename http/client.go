@@ -16,22 +16,22 @@ type Client struct {
 	decoder func([]byte, any) error
 }
 
-func NewClient(opts ...Opt) *Client {
-	clientOpts := defaultOpts()
-	clientOpts.applyOptions(opts)
+func NewClient(opt ...ClientOpt) *Client {
+	opts := defaultClientOpts
+	opts.apply(opt)
 
 	hc := &http.Client{
-		Timeout: time.Duration(clientOpts.timeout) * time.Second,
+		Timeout: time.Duration(opts.timeout) * time.Second,
 	}
-	if clientOpts.tr != nil {
-		hc.Transport = clientOpts.tr
+	if opts.tr != nil {
+		hc.Transport = opts.tr
 	}
 
 	return &Client{
-		host:    clientOpts.host,
 		hc:      hc,
-		encoder: clientOpts.encoder,
-		decoder: clientOpts.decoder,
+		host:    opts.host,
+		encoder: opts.encoder,
+		decoder: opts.decoder,
 	}
 }
 

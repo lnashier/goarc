@@ -1,20 +1,18 @@
 package app
 
 import (
-	"github.com/lnashier/goarc/config"
-	"github.com/lnashier/goarc/http/handler"
-	"github.com/lnashier/goarc/http/service"
+	chttp "github.com/lnashier/goarc/http"
 	"net/http"
 )
 
-func App(cfg *config.Config, srv *service.Server) error {
-	ctr, err := NewController(cfg)
+func App(srv *chttp.Server) error {
+	ctr, err := NewController()
 	if err != nil {
 		return err
 	}
 
-	srv.Register("/examples", http.MethodPost, &handler.JSON{Route: ctr.SaveExample})
-	srv.Register("/example/{id}", http.MethodGet, &handler.Text{Route: ctr.GetExample})
+	srv.Register("/examples", http.MethodPost, &chttp.JSONHandler{Route: ctr.SaveExample})
+	srv.Register("/example/{id}", http.MethodGet, &chttp.TextHandler{Route: ctr.GetExample})
 
 	return nil
 }

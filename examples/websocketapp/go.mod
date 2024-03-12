@@ -2,9 +2,11 @@ module websocketapp
 
 go 1.22.0
 
+replace github.com/lnashier/goarc => ../../../goarc
+
 require (
 	github.com/gorilla/websocket v1.5.1
-	github.com/lnashier/goarc v0.4.0
+	github.com/lnashier/goarc v0.0.0
 )
 
 require (

@@ -5,13 +5,5 @@
     "shutdown": {
       "gracetime": 1
     }
-  },
-  "log": {
-    "network": true,
-    "app": {
-      "debug": true,
-      "info": true,
-      "error": true
-    }
   }
 }

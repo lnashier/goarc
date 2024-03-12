@@ -1,15 +1,15 @@
-package handler
+package http
 
 import (
 	"net/http"
 )
 
-// Text wraps original Route function to write response in plain/text
-type Text struct {
+// TextHandler wraps original Route function to write response in plain/text
+type TextHandler struct {
 	Route Route
 }
 
-func (h *Text) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (h *TextHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	result, err := h.Route(req)
 	if err != nil {
 		HandleError(w, err)

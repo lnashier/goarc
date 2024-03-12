@@ -5,6 +5,23 @@ import (
 	"net/http"
 )
 
+// HandleError writes provided error to ResponseWriter in JSON format.
+// If error is not of type Error, error is converted to InternalServerError
+func HandleError(w http.ResponseWriter, err error) {
+	var httpErr *Error
+	switch specificError := err.(type) {
+	case *Error:
+		httpErr = specificError
+	default:
+		// default for unknown errors is 500 with no client-facing message
+		httpErr = NewError(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), err)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(httpErr.Status)
+	w.Write(marshal(httpErr))
+}
+
 // Error represents an HTTP error with an underlying error cause
 type Error struct {
 	Status  int    `json:"status"`
@@ -32,8 +49,6 @@ func (err Error) Unwrap() error {
 // The 'message' parameter is what gets returned in our standard error response.
 // Overall, we don't want to give away internal details of most errors;
 // but in the case of a 400, it's customary to tell callers what they did wrong.
-//
-// The "cause" parameter is printed as a log by the wrapper around the controller function.
 func NewError(status int, message string, cause error) *Error {
 	return &Error{
 		Status:  status,

@@ -2,70 +2,49 @@ package cli
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"github.com/lnashier/goarc/buildinfo"
-	"github.com/lnashier/goarc/config"
-	"github.com/lnashier/goarc/log"
 	"github.com/spf13/cobra"
 )
 
 type Service struct {
 	name    string
-	cfg     *config.Config
 	rootCmd *cobra.Command
 	exitCh  chan struct{}
 }
 
-func NewService(cfg *config.Config) *Service {
+func NewService(opt ...Opt) *Service {
+	svcOpts := defaultOpts
+	svcOpts.apply(opt)
+
 	rootCmd := &cobra.Command{
 		Use:   "Root",
 		Short: "CLI Service",
 		Run: func(*cobra.Command, []string) {
-			log.Info("Provide APP specific command")
+			panic("Provide APP specific command")
 		},
 	}
 
-	return &Service{
-		name:    cfg.GetString("name"),
-		cfg:     cfg,
+	s := &Service{
+		name:    svcOpts.name,
 		rootCmd: rootCmd,
 	}
+
+	// Configure app(s)
+	for _, app := range svcOpts.apps {
+		if err := app(s); err != nil {
+			panic(fmt.Sprintf("failed to configure app: %v", err))
+		}
+	}
+
+	return s
 }
 
 func (s *Service) Start() error {
-	log.Info("Service#Start enter")
-	defer log.Info("Service#Start exit")
-
 	s.exitCh = make(chan struct{})
-
-	s.rootCmd.AddCommand(&cobra.Command{
-		Use:           "buildinfo",
-		SilenceErrors: true,
-		SilenceUsage:  true,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			report, err := json.MarshalIndent(buildinfo.New(func() buildinfo.Report {
-				return buildinfo.Report{
-					buildinfo.KeyAppName: s.name,
-					buildinfo.KeyVersion: buildinfo.Version,
-					buildinfo.KeyHash:    buildinfo.Hash,
-				}
-			}).Report(), "", "  ")
-			fmt.Println(string(report))
-			return err
-		},
-	})
-
-	if err := s.rootCmd.Execute(); err != nil {
-		log.Error("Service#Start failed to execute command: %v", err)
-		return err
-	}
-	return nil
+	return s.rootCmd.Execute()
 }
 
 func (s *Service) Stop() error {
-	log.Info("Service#Stop enter")
-	defer log.Info("Service#Stop exit")
 	close(s.exitCh)
 	return nil
 }

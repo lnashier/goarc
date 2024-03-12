@@ -1,15 +1,11 @@
 package app
 
-import "github.com/lnashier/goarc/config"
-
 type Controller struct {
-	cfg   *config.Config
 	store map[string]string
 }
 
-func NewController(cfg *config.Config) (*Controller, error) {
+func NewController() (*Controller, error) {
 	return &Controller{
-		cfg:   cfg,
 		store: make(map[string]string),
 	}, nil
 }
