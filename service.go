@@ -1,6 +1,5 @@
 package goarc
 
-// Service defines the methods required for a service.
 type Service interface {
 	// Start should initiate the startup of the service.
 	// It returns an error if the startup process encounters any issues.

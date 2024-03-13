@@ -12,14 +12,12 @@ import (
 )
 
 type Service struct {
-	name              string
-	httpServer        *http.Server
-	router            *mux.Router
-	preempt           *negroni.Negroni
-	healthController  *healthController
-	components        []Component
-	exitCh            chan struct{}
-	shutdownGracetime time.Duration
+	opts       serviceOpts
+	httpServer *http.Server
+	router     *mux.Router
+	preempt    *negroni.Negroni
+	exitCh     chan struct{}
+	components []Component
 }
 
 func NewService(opt ...ServiceOpt) *Service {
@@ -29,20 +27,16 @@ func NewService(opt ...ServiceOpt) *Service {
 	preempt := negroni.New()
 
 	s := &Service{
-		name: opts.name,
+		opts: opts,
 		httpServer: &http.Server{
 			Addr:    fmt.Sprintf(":%d", opts.port),
 			Handler: preempt,
 		},
-		preempt:           preempt,
-		router:            mux.NewRouter(),
-		healthController:  newHealthController(),
-		exitCh:            make(chan struct{}),
-		components:        make([]Component, 0),
-		shutdownGracetime: opts.shutdownGracetime,
+		preempt:    preempt,
+		router:     mux.NewRouter(),
+		exitCh:     make(chan struct{}),
+		components: make([]Component, 0),
 	}
-
-	setupHealthEndpoints(s)
 
 	// Configure app(s); if provided
 	for _, app := range opts.apps {
@@ -70,37 +64,26 @@ func (s *Service) Start() error {
 // components, and then calling underlying http-server Shutdown.
 func (s *Service) Stop() error {
 	close(s.exitCh)
-	s.healthController.setStatusDown()
-	// Stop any long-running services within the app
+	// Stop any long-running components within the service
 	for _, comp := range s.components {
 		comp.Stop()
 	}
-
-	time.Sleep(s.shutdownGracetime)
+	time.Sleep(s.opts.shutdownGracetime)
 	return s.httpServer.Shutdown(context.Background())
 }
 
-// Register registers a RouteHandler for a given path and http.Method
-// preHandlers can be optionally supplied, they will run before routeHandler in the order supplied
-func (s *Service) Register(path, method string, routeHandler http.Handler, preHandlers ...negroni.Handler) {
-	chain := negroni.New(preHandlers...)
-	chain.UseHandler(&reject{
-		h:    routeHandler,
-		done: s.exitCh,
-	})
+// Register registers a route-handler (http.Handler) for a given path and http.Method.
+// Pre-handler(s) can optionally be supplied, they will run before route-handler in the order supplied.
+func (s *Service) Register(path, method string, routeHandler http.Handler, preHandler ...negroni.Handler) {
+	chain := negroni.New(preHandler...)
+	chain.UseHandler(routeHandler)
 	path = "/" + strings.TrimLeft(path, "/")
 	if err := s.router.Handle(path, chain).Methods(method).GetError(); err != nil {
 		panic(fmt.Sprintf("couldn't register %s error %v", path, err.Error()))
 	}
 }
 
-// Component registers a Component that will run within the app that requires stopping
-// when service shuts down
+// Component registers a Component that will run within the service that requires stopping when service shuts down.
 func (s *Service) Component(comp Component) {
 	s.components = append(s.components, comp)
-}
-
-func setupHealthEndpoints(s *Service) {
-	s.router.Methods(http.MethodGet).Path("/alive").HandlerFunc(s.healthController.LiveHandler)
-	s.router.Methods(http.MethodGet).Path("/ready").HandlerFunc(s.healthController.ReadyHandler)
 }
