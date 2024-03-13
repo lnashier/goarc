@@ -1,16 +1,16 @@
-package handler
+package http
 
 import (
 	"encoding/xml"
 	"net/http"
 )
 
-// XML wraps original Route function to write response in XML Format
-type XML struct {
+// XMLHandler wraps original Route function to write response in XML Format
+type XMLHandler struct {
 	Route Route
 }
 
-func (x *XML) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (x *XMLHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	result, err := x.Route(req)
 	if err != nil {
 		HandleError(w, err)

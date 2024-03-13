@@ -1,45 +1,30 @@
 package cli
 
-import (
-	"github.com/lnashier/goarc/config"
-)
-
 type Opt func(*opts)
 
-type opts struct {
-	cfg *config.Config
-	//logger *log.Logger TODO
-	apps []func(*config.Config, *Service) error
+var defaultOpts = opts{
+	name: "unknown",
+	apps: []func(*Service) error{},
 }
 
-func (s *opts) applyOptions(opts []Opt) {
+type opts struct {
+	name string
+	apps []func(*Service) error
+}
+
+func (s *opts) apply(opts []Opt) {
 	for _, o := range opts {
 		o(s)
 	}
 }
 
-func defaultOpts() *opts {
-	return &opts{
-		apps: []func(*config.Config, *Service) error{},
-	}
-}
-
-func WithConfig(cfg *config.Config) Opt {
+func ServiceName(name string) Opt {
 	return func(s *opts) {
-		s.cfg = cfg
+		s.name = name
 	}
 }
 
-/*TODO
-// WithLogger
-func WithLogger(logger *log.Logger) Opt {
-	return func(s *opts) {
-		s.logger = logger
-	}
-}
-*/
-
-func WithApp(app ...func(*config.Config, *Service) error) Opt {
+func App(app ...func(*Service) error) Opt {
 	return func(s *opts) {
 		s.apps = append(s.apps, app...)
 	}

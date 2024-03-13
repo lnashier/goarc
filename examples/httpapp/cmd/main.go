@@ -1,14 +1,19 @@
 package main
 
 import (
-	"github.com/lnashier/goarc/config"
-	"github.com/lnashier/goarc/http/service"
+	"github.com/lnashier/goarc"
+	"github.com/lnashier/goarc/http"
 	"httpapp/internal/app"
+	"time"
 )
 
 func main() {
-	service.Up(service.Build(
-		service.WithConfig(config.Get()),
-		service.WithApp(app.App),
-	))
+	goarc.Up(
+		http.NewServer(
+			http.ServerName("httpapp"),
+			http.ServerPort(8080),
+			http.ServerShutdownGracetime(time.Duration(1)*time.Second),
+			http.App(app.App),
+		),
+	)
 }

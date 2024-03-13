@@ -1,8 +1,8 @@
 package echo
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
-	"github.com/lnashier/goarc/log"
 	"math"
 	"strconv"
 	"sync"
@@ -16,9 +16,8 @@ type Echoer struct {
 	ServiceGoingAway chan struct{}
 }
 
-func (e *Echoer) Stop() error {
+func (e *Echoer) Stop() {
 	close(e.ServiceGoingAway)
-	return nil
 }
 
 type Message struct {
@@ -51,7 +50,7 @@ func (e *Echoer) receive(wg *sync.WaitGroup) {
 		switch {
 		case err != nil:
 			if !websocket.IsCloseError(err, 1000) {
-				log.Error("received error %s", err.Error())
+				fmt.Printf("received error %s", err.Error())
 			}
 			return
 		default:

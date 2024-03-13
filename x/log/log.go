@@ -2,9 +2,9 @@ package log
 
 import (
 	"fmt"
-	"github.com/lnashier/goarc/buildinfo"
-	"github.com/lnashier/goarc/env"
-	"github.com/lnashier/goarc/zson"
+	"github.com/lnashier/goarc/x/buildinfo"
+	"github.com/lnashier/goarc/x/env"
+	"github.com/lnashier/goarc/x/zson"
 	"log"
 	"os"
 	"time"
