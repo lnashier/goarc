@@ -6,15 +6,15 @@ import (
 	"syscall"
 )
 
-// Up is designed to boot up a given Service and wait for its shutdown.
-// Internally, it starts a goroutine that listens for specific signals:
+// Up manages the lifecycle of a service. It blocks until the service shuts down or the service.Start() method returns.
+// It listens to specific signals and gracefully shut down the service when any of these signals are received:
 //
 //	syscall.SIGINT
 //	syscall.SIGTERM
 //	syscall.SIGQUIT
 //	syscall.SIGABRT
 //
-// The function blocks until the service shuts down or the service.Start() method returns.
+// It exits with a non-zero status code if an error occurs during either the startup or shutdown process.
 func Up(s Service) {
 	go func(s Service) {
 		sig := make(chan os.Signal, 1)
