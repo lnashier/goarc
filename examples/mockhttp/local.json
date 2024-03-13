@@ -1,5 +1,5 @@
 {
-  "name": "mockserver",
+  "name": "mockhttp",
   "server": {
     "port": 8090,
     "shutdown": {

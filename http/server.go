@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/urfave/negroni"
@@ -57,7 +58,11 @@ func NewServer(opt ...ServerOpt) *Server {
 // Routes should be registered before calling start
 func (s *Server) Start() error {
 	s.preempt.UseHandler(s.router)
-	return s.httpServer.ListenAndServe()
+	err := s.httpServer.ListenAndServe()
+	if !errors.Is(err, http.ErrServerClosed) {
+		return err
+	}
+	return nil
 }
 
 // Stop gracefully shuts down the server without interrupting any

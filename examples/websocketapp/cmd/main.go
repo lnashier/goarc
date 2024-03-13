@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/lnashier/goarc"
 	"github.com/lnashier/goarc/http"
 	"github.com/lnashier/goarc/x/config"
 	"time"
@@ -9,7 +10,7 @@ import (
 
 func main() {
 	cfg := config.Get()
-	http.ServerUp(
+	goarc.Up(
 		http.NewServer(
 			http.ServerName(cfg.GetString("name")),
 			http.ServerPort(cfg.GetInt("server.port")),

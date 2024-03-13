@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
+	"github.com/lnashier/goarc"
 	chttp "github.com/lnashier/goarc/http"
 	"github.com/lnashier/goarc/x/config"
 	"github.com/lnashier/goarc/x/env"
@@ -49,7 +50,7 @@ func main() {
 		),
 	)
 
-	chttp.ServerUp(server)
+	goarc.Up(server)
 }
 
 func GetConfig() *config.Config {

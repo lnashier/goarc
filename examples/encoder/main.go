@@ -5,11 +5,12 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"github.com/lnashier/goarc"
 	"github.com/lnashier/goarc/cli"
 )
 
 func main() {
-	cli.Up(cli.NewService(
+	goarc.Up(cli.NewService(
 		cli.ServiceName("encoder"),
 		cli.App(
 			func(svc *cli.Service) error {

@@ -1,13 +1,14 @@
 package main
 
 import (
+	"github.com/lnashier/goarc"
 	"github.com/lnashier/goarc/http"
 	"httpapp/internal/app"
 	"time"
 )
 
 func main() {
-	http.ServerUp(
+	goarc.Up(
 		http.NewServer(
 			http.ServerName("httpapp"),
 			http.ServerPort(8080),

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 )
@@ -19,8 +20,8 @@ func NewService(opt ...Opt) *Service {
 	rootCmd := &cobra.Command{
 		Use:   "Root",
 		Short: "CLI Service",
-		Run: func(*cobra.Command, []string) {
-			panic("Provide APP specific command")
+		RunE: func(*cobra.Command, []string) error {
+			return errors.New("provide APP specific command")
 		},
 	}
 
