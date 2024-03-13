@@ -17,7 +17,6 @@ type Service struct {
 	router            *mux.Router
 	preempt           *negroni.Negroni
 	healthController  *healthController
-	components        []Component
 	exitCh            chan struct{}
 	shutdownGracetime time.Duration
 }
@@ -38,7 +37,6 @@ func NewService(opt ...ServiceOpt) *Service {
 		router:            mux.NewRouter(),
 		healthController:  newHealthController(),
 		exitCh:            make(chan struct{}),
-		components:        make([]Component, 0),
 		shutdownGracetime: opts.shutdownGracetime,
 	}
 
@@ -71,11 +69,6 @@ func (s *Service) Start() error {
 func (s *Service) Stop() error {
 	close(s.exitCh)
 	s.healthController.setStatusDown()
-	// Stop any long-running services within the app
-	for _, comp := range s.components {
-		comp.Stop()
-	}
-
 	time.Sleep(s.shutdownGracetime)
 	return s.httpServer.Shutdown(context.Background())
 }
@@ -92,12 +85,6 @@ func (s *Service) Register(path, method string, routeHandler http.Handler, preHa
 	if err := s.router.Handle(path, chain).Methods(method).GetError(); err != nil {
 		panic(fmt.Sprintf("couldn't register %s error %v", path, err.Error()))
 	}
-}
-
-// Component registers a Component that will run within the app that requires stopping
-// when service shuts down
-func (s *Service) Component(comp Component) {
-	s.components = append(s.components, comp)
 }
 
 func setupHealthEndpoints(s *Service) {

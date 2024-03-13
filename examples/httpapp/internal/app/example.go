@@ -20,7 +20,6 @@ func (c Controller) SaveExample(req *http.Request) (any, error) {
 	return ExampleResponse{
 		MsgID: string(msgID[:]),
 	}, nil
-
 }
 
 func (c Controller) GetExample(req *http.Request) (any, error) {
