@@ -4,15 +4,15 @@ import (
 	"crypto/md5"
 	"errors"
 	"github.com/gorilla/mux"
-	chttp "github.com/lnashier/goarc/http"
+	xhttp "github.com/lnashier/goarc/x/http"
 	"net/http"
 )
 
 func (c Controller) SaveExample(req *http.Request) (any, error) {
 	exampleReq := &ExampleRequest{}
-	err := chttp.RequestParse(req, exampleReq)
+	err := xhttp.RequestParse(req, exampleReq)
 	if err != nil {
-		return chttp.BadRequestf(err, err.Error())
+		return xhttp.BadRequestf(err, err.Error())
 	}
 
 	msgID := md5.Sum([]byte(exampleReq.Data))
@@ -28,7 +28,7 @@ func (c Controller) GetExample(req *http.Request) (any, error) {
 
 	data, ok := c.store[msgID]
 	if ok {
-		return chttp.NotFound(nil)
+		return xhttp.NotFound(nil)
 	}
 	return data, nil
 }

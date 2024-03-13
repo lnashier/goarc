@@ -13,8 +13,8 @@ type Service struct {
 	exitCh  chan struct{}
 }
 
-func NewService(opt ...Opt) *Service {
-	svcOpts := defaultOpts
+func NewService(opt ...ServiceOpt) *Service {
+	svcOpts := defaultServiceOpts
 	svcOpts.apply(opt)
 
 	rootCmd := &cobra.Command{

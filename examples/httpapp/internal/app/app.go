@@ -1,18 +1,19 @@
 package app
 
 import (
-	chttp "github.com/lnashier/goarc/http"
+	shttp "github.com/lnashier/goarc/http"
+	xhttp "github.com/lnashier/goarc/x/http"
 	"net/http"
 )
 
-func App(srv *chttp.Server) error {
+func App(srv *shttp.Service) error {
 	ctr, err := NewController()
 	if err != nil {
 		return err
 	}
 
-	srv.Register("/examples", http.MethodPost, &chttp.JSONHandler{Route: ctr.SaveExample})
-	srv.Register("/example/{id}", http.MethodGet, &chttp.TextHandler{Route: ctr.GetExample})
+	srv.Register("/examples", http.MethodPost, &xhttp.JSONHandler{Route: ctr.SaveExample})
+	srv.Register("/example/{id}", http.MethodGet, &xhttp.TextHandler{Route: ctr.GetExample})
 
 	return nil
 }

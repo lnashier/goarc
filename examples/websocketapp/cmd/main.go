@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/lnashier/goarc"
-	"github.com/lnashier/goarc/http"
+	shttp "github.com/lnashier/goarc/http"
 	"github.com/lnashier/goarc/x/config"
 	"time"
 	"websocketapp/internal/app"
@@ -11,11 +11,11 @@ import (
 func main() {
 	cfg := config.Get()
 	goarc.Up(
-		http.NewServer(
-			http.ServerName(cfg.GetString("name")),
-			http.ServerPort(cfg.GetInt("server.port")),
-			http.ServerShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
-			http.App(app.App),
+		shttp.NewService(
+			shttp.ServiceName(cfg.GetString("name")),
+			shttp.ServicePort(cfg.GetInt("server.port")),
+			shttp.ServiceShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
+			shttp.App(app.App),
 		),
 	)
 }

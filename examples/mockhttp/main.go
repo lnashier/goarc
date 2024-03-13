@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/lnashier/goarc"
-	chttp "github.com/lnashier/goarc/http"
+	shttp "github.com/lnashier/goarc/http"
 	"github.com/lnashier/goarc/x/config"
 	"github.com/lnashier/goarc/x/env"
+	xhttp "github.com/lnashier/goarc/x/http"
 	"github.com/lnashier/goarc/x/zson"
 	"net/http"
 	"time"
@@ -15,12 +16,12 @@ import (
 func main() {
 	cfg := GetConfig()
 
-	server := chttp.NewServer(
-		chttp.ServerName(cfg.GetString("name")),
-		chttp.ServerPort(cfg.GetInt("server.port")),
-		chttp.ServerShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
-		chttp.App(
-			func(srv *chttp.Server) error {
+	service := shttp.NewService(
+		shttp.ServiceName(cfg.GetString("name")),
+		shttp.ServicePort(cfg.GetInt("server.port")),
+		shttp.ServiceShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
+		shttp.App(
+			func(srv *shttp.Service) error {
 				srv.Register(
 					"/examples",
 					http.MethodPost,
@@ -50,7 +51,7 @@ func main() {
 		),
 	)
 
-	goarc.Up(server)
+	goarc.Up(service)
 }
 
 func GetConfig() *config.Config {
@@ -65,13 +66,13 @@ func GetConfig() *config.Config {
 
 type CustomHandler struct {
 	ContentType string
-	Route       chttp.Route
+	Route       xhttp.Route
 }
 
 func (h *CustomHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	result, err := h.Route(req)
 	if err != nil {
-		chttp.HandleError(w, err)
+		xhttp.HandleError(w, err)
 		return
 	}
 	w.Header().Set("Content-Type", h.ContentType)
