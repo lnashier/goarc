@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type Server struct {
+type Service struct {
 	name              string
 	httpServer        *http.Server
 	router            *mux.Router
@@ -22,13 +22,13 @@ type Server struct {
 	shutdownGracetime time.Duration
 }
 
-func NewServer(opt ...ServerOpt) *Server {
-	opts := defaultServerOpts
+func NewService(opt ...ServiceOpt) *Service {
+	opts := defaultServiceOpts
 	opts.apply(opt)
 
 	preempt := negroni.New()
 
-	s := &Server{
+	s := &Service{
 		name: opts.name,
 		httpServer: &http.Server{
 			Addr:    fmt.Sprintf(":%d", opts.port),
@@ -54,9 +54,9 @@ func NewServer(opt ...ServerOpt) *Server {
 	return s
 }
 
-// Start starts the server instance
+// Start starts the service
 // Routes should be registered before calling start
-func (s *Server) Start() error {
+func (s *Service) Start() error {
 	s.preempt.UseHandler(s.router)
 	err := s.httpServer.ListenAndServe()
 	if !errors.Is(err, http.ErrServerClosed) {
@@ -65,10 +65,10 @@ func (s *Server) Start() error {
 	return nil
 }
 
-// Stop gracefully shuts down the server without interrupting any
+// Stop gracefully shuts down the service without interrupting any
 // active connections. Stop works by first calling all long-running registered
-// components, and then calling underlying http-server's shutdown.
-func (s *Server) Stop() error {
+// components, and then calling underlying http-server Shutdown.
+func (s *Service) Stop() error {
 	close(s.exitCh)
 	s.healthController.setStatusDown()
 	// Stop any long-running services within the app
@@ -82,7 +82,7 @@ func (s *Server) Stop() error {
 
 // Register registers a RouteHandler for a given path and http.Method
 // preHandlers can be optionally supplied, they will run before routeHandler in the order supplied
-func (s *Server) Register(path, method string, routeHandler http.Handler, preHandlers ...negroni.Handler) {
+func (s *Service) Register(path, method string, routeHandler http.Handler, preHandlers ...negroni.Handler) {
 	chain := negroni.New(preHandlers...)
 	chain.UseHandler(&reject{
 		h:    routeHandler,
@@ -94,12 +94,13 @@ func (s *Server) Register(path, method string, routeHandler http.Handler, preHan
 	}
 }
 
-// Component registers a Component that will run within the app that requires stopping when server shuts down
-func (s *Server) Component(comp Component) {
+// Component registers a Component that will run within the app that requires stopping
+// when service shuts down
+func (s *Service) Component(comp Component) {
 	s.components = append(s.components, comp)
 }
 
-func setupHealthEndpoints(s *Server) {
+func setupHealthEndpoints(s *Service) {
 	s.router.Methods(http.MethodGet).Path("/alive").HandlerFunc(s.healthController.LiveHandler)
 	s.router.Methods(http.MethodGet).Path("/ready").HandlerFunc(s.healthController.ReadyHandler)
 }

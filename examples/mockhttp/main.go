@@ -15,12 +15,12 @@ import (
 func main() {
 	cfg := GetConfig()
 
-	server := chttp.NewServer(
-		chttp.ServerName(cfg.GetString("name")),
-		chttp.ServerPort(cfg.GetInt("server.port")),
-		chttp.ServerShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
+	service := chttp.NewService(
+		chttp.ServiceName(cfg.GetString("name")),
+		chttp.ServicePort(cfg.GetInt("server.port")),
+		chttp.ServiceShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
 		chttp.App(
-			func(srv *chttp.Server) error {
+			func(srv *chttp.Service) error {
 				srv.Register(
 					"/examples",
 					http.MethodPost,
@@ -50,7 +50,7 @@ func main() {
 		),
 	)
 
-	goarc.Up(server)
+	goarc.Up(service)
 }
 
 func GetConfig() *config.Config {

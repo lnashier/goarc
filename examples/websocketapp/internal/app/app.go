@@ -8,7 +8,7 @@ import (
 	"websocketapp/internal/app/echo"
 )
 
-func App(srv *chttp.Server) error {
+func App(srv *chttp.Service) error {
 	upgrader := &websocket.Upgrader{
 		HandshakeTimeout:  time.Duration(1000) * time.Millisecond,
 		ReadBufferSize:    1024,

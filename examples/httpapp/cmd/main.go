@@ -9,10 +9,10 @@ import (
 
 func main() {
 	goarc.Up(
-		http.NewServer(
-			http.ServerName("httpapp"),
-			http.ServerPort(8080),
-			http.ServerShutdownGracetime(time.Duration(1)*time.Second),
+		http.NewService(
+			http.ServiceName("httpapp"),
+			http.ServicePort(8080),
+			http.ServiceShutdownGracetime(time.Duration(1)*time.Second),
 			http.App(app.App),
 		),
 	)

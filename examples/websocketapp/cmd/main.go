@@ -11,10 +11,10 @@ import (
 func main() {
 	cfg := config.Get()
 	goarc.Up(
-		http.NewServer(
-			http.ServerName(cfg.GetString("name")),
-			http.ServerPort(cfg.GetInt("server.port")),
-			http.ServerShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
+		http.NewService(
+			http.ServiceName(cfg.GetString("name")),
+			http.ServicePort(cfg.GetInt("server.port")),
+			http.ServiceShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
 			http.App(app.App),
 		),
 	)
