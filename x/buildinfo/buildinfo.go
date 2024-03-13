@@ -18,7 +18,7 @@ var (
 type Key string
 
 const (
-	KeyAppName    Key = "appName"
+	KeyService    Key = "service"
 	KeyHost           = "host"
 	KeyStartTime      = "startTime"
 	KeyUptime         = "uptime"

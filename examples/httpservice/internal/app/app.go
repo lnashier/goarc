@@ -13,7 +13,7 @@ func App(srv *shttp.Service) error {
 	}
 
 	srv.Register("/examples", http.MethodPost, &xhttp.JSONHandler{Route: ctr.SaveExample})
-	srv.Register("/example/{id}", http.MethodGet, &xhttp.TextHandler{Route: ctr.GetExample})
+	srv.Register("/examples/{id}", http.MethodGet, &xhttp.TextHandler{Route: ctr.GetExample})
 
 	return nil
 }

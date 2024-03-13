@@ -9,7 +9,7 @@ import (
 )
 
 func (c Controller) SaveExample(req *http.Request) (any, error) {
-	exampleReq := &ExampleRequest{}
+	exampleReq := &SaveExampleRequest{}
 	err := xhttp.RequestParse(req, exampleReq)
 	if err != nil {
 		return xhttp.BadRequestf(err, err.Error())
@@ -17,7 +17,7 @@ func (c Controller) SaveExample(req *http.Request) (any, error) {
 
 	msgID := md5.Sum([]byte(exampleReq.Data))
 
-	return ExampleResponse{
+	return &SaveExampleResponse{
 		MsgID: string(msgID[:]),
 	}, nil
 }
@@ -32,17 +32,17 @@ func (c Controller) GetExample(req *http.Request) (any, error) {
 	return data, nil
 }
 
-type ExampleRequest struct {
+type SaveExampleRequest struct {
 	Data string `json:"data"`
 }
 
-func (er ExampleRequest) Validate(*http.Request) error {
+func (er SaveExampleRequest) Validate(*http.Request) error {
 	if len(er.Data) < 1 {
 		return errors.New("missing data")
 	}
 	return nil
 }
 
-type ExampleResponse struct {
+type SaveExampleResponse struct {
 	MsgID string `json:"msgId"`
 }

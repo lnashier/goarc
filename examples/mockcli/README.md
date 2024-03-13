@@ -4,7 +4,7 @@
 
 ```shell
 go build -o bin/mockcli .
-./bin/mockcli echo
+./bin/mockcli echo hello
 ```
 
 # Run

@@ -1,4 +1,4 @@
-module httpapp
+module httpservice
 
 go 1.22.0
 
