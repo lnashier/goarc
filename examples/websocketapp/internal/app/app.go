@@ -2,13 +2,14 @@ package app
 
 import (
 	"github.com/gorilla/websocket"
-	chttp "github.com/lnashier/goarc/http"
+	shttp "github.com/lnashier/goarc/http"
+	xhttp "github.com/lnashier/goarc/x/http"
 	"net/http"
 	"time"
 	"websocketapp/internal/app/echo"
 )
 
-func App(srv *chttp.Service) error {
+func App(srv *shttp.Service) error {
 	upgrader := &websocket.Upgrader{
 		HandshakeTimeout:  time.Duration(1000) * time.Millisecond,
 		ReadBufferSize:    1024,
@@ -21,13 +22,13 @@ func App(srv *chttp.Service) error {
 	srv.Register("/echo", http.MethodGet, http.HandlerFunc(
 		func(w http.ResponseWriter, req *http.Request) {
 			if ok := websocket.IsWebSocketUpgrade(req); !ok {
-				chttp.HandleError(w, chttp.NewError(http.StatusNotAcceptable, "", nil))
+				xhttp.HandleError(w, xhttp.NewError(http.StatusNotAcceptable, "", nil))
 				return
 			}
 
 			conn, err := upgrader.Upgrade(w, req, nil)
 			if err != nil {
-				chttp.HandleError(w, chttp.NewError(http.StatusBadRequest, err.Error(), err))
+				xhttp.HandleError(w, xhttp.NewError(http.StatusBadRequest, err.Error(), err))
 				return
 			}
 			defer conn.Close()
@@ -41,7 +42,7 @@ func App(srv *chttp.Service) error {
 			srv.Component(echoer)
 
 			if err = echoer.Run(); err != nil {
-				chttp.HandleError(w, chttp.NewError(http.StatusInternalServerError, err.Error(), err))
+				xhttp.HandleError(w, xhttp.NewError(http.StatusInternalServerError, err.Error(), err))
 				return
 			}
 		},

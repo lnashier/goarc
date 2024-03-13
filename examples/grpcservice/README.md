@@ -1,4 +1,4 @@
-# Example GRPC App
+# Example gRPC App
 
 ```shell
 protoc --go_out=. --go-grpc_out=. internal/proto/echo/*.proto
