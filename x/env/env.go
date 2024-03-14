@@ -12,23 +12,6 @@ const (
 
 type Environment string
 
-var environment Environment
-
-func Get() Environment {
-	if environment == "" {
-		environment = getFromEnvironment()
-	}
-	return environment
-}
-
-func getFromEnvironment() Environment {
-	env, ok := os.LookupEnv("ENV")
-	if !ok {
-		env = Local
-	}
-	return Environment(env)
-}
-
 func (e Environment) IsLocal() bool {
 	return e == Local
 }
@@ -43,6 +26,19 @@ func (e Environment) IsProd() bool {
 
 func (e Environment) String() string {
 	return string(e)
+}
+
+var environment Environment
+
+func Get() Environment {
+	if environment == "" {
+		env, ok := os.LookupEnv("ENV")
+		if !ok {
+			env = Local
+		}
+		environment = Environment(env)
+	}
+	return environment
 }
 
 func Hostname() string {

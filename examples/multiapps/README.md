@@ -3,7 +3,9 @@
 # Build & Run
 
 ```shell
-go build -o ./bin/multiapps .
+go build -trimpath -a -o ./bin/multiapps \
+  -ldflags "-X github.com/lnashier/goarc/x/buildinfo.Version=$(cat VERSION) \
+            -X github.com/lnashier/goarc/x/buildinfo.Hash=$(git rev-parse HEAD)" .
 ./bin/multiapps
 ```
 

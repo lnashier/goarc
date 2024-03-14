@@ -10,17 +10,20 @@ import (
 	"io"
 )
 
-// Config is the configuration
+// Config is the configuration. It internally uses Viper config.
+// We decided to create a wrapper instead of consuming Viper directly due to following reasons:
+//
+//   - Viper is a complex library, and we preferred using a simple config system which can be extended if need to be
+//   - With our own Config, we can provide a stable API, even when Viper undergoes versioning updates.
+//
+// Note that goarc configuration is a subset of Viper, and it may not support all the functions that are present in Viper.
 type Config struct {
 	v *viper.Viper
 }
 
 // New is to create a new blank config object
 func New() *Config {
-	s := &Config{
-		v: viper.New(),
-	}
-	return s
+	return &Config{v: viper.New()}
 }
 
 // NewWithPath is to create a new config object for given path+name

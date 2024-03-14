@@ -87,8 +87,7 @@ func Error(format string, v ...any) {
 	DefaultLogger.Error(format, v...)
 }
 
-// Panic ...
-// Panic logging level is always enabled
+// Panic is always enabled
 func Panic(format string, v ...any) {
 	DefaultLogger.Panic(format, v...)
 }
@@ -109,8 +108,7 @@ func (l *Logger) Error(f string, v ...any) {
 	l.log(ErrorLevel, AppType, fmt.Sprintf(f, v...))
 }
 
-// Panic ...
-// Panic logging level is always enabled
+// Panic is always enabled
 func (l *Logger) Panic(f string, v ...any) {
 	l.log(PanicLevel, AppType, fmt.Sprintf(f, v...))
 	panic("")

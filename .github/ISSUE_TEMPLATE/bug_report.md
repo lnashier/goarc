@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Report a non-security bug.  For suspected security vulnerabilities or crashes, please use "Report a Security Vulnerability", below.
+about: Report a bug.
 labels: 'Type: Bug'
 
 ---
