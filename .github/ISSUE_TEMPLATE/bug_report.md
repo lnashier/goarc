@@ -1,38 +1,21 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+name: Bug Report
+about: Report a non-security bug.  For suspected security vulnerabilities or crashes, please use "Report a Security Vulnerability", below.
+labels: 'Type: Bug'
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+Please see the Examples in our main README.md, then answer the questions below before submitting your issue.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+### What version of goarc are you using?
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+### What version of Go are you using (`go version`)?
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+### What operating system (Linux, Windows, …) and version?
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+### What did you do?
+If possible, provide a recipe for reproducing the error.
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+### What did you expect to see?
 
-**Additional context**
-Add any other context about the problem here.
+### What did you see instead?
