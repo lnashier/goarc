@@ -2,12 +2,12 @@ package echo
 
 import (
 	"errors"
-	shttp "github.com/lnashier/goarc/http"
+	goarchttp "github.com/lnashier/goarc/http"
 	xhttp "github.com/lnashier/goarc/x/http"
 	"net/http"
 )
 
-func App(srv *shttp.Service) error {
+func App(srv *goarchttp.Service) error {
 	srv.Register("/echo", http.MethodPost, &xhttp.JSONHandler{Route: func(req *http.Request) (any, error) {
 		echoReq := &EchoRequest{}
 		err := xhttp.RequestParse(req, echoReq)

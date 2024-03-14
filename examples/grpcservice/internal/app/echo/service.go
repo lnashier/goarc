@@ -3,7 +3,7 @@ package echo
 import (
 	"context"
 	"fmt"
-	"github.com/lnashier/goarc/grpc"
+	goarcgrpc "github.com/lnashier/goarc/grpc"
 	pb "grpcservice/internal/proto/echo"
 	"io"
 	"strings"
@@ -13,7 +13,7 @@ type Service struct {
 	pb.UnsafeEchoServer
 }
 
-func Register(srv *grpc.Service) {
+func Register(srv *goarcgrpc.Service) {
 	pb.RegisterEchoServer(srv, &Service{})
 }
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"github.com/lnashier/goarc"
-	shttp "github.com/lnashier/goarc/http"
+	goarchttp "github.com/lnashier/goarc/http"
 	"github.com/lnashier/goarc/x/config"
 	"github.com/lnashier/goarc/x/env"
 	xhttp "github.com/lnashier/goarc/x/http"
@@ -16,12 +16,12 @@ import (
 func main() {
 	cfg := GetConfig()
 
-	service := shttp.NewService(
-		shttp.ServiceName(cfg.GetString("name")),
-		shttp.ServicePort(cfg.GetInt("server.port")),
-		shttp.ServiceShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
-		shttp.App(
-			func(srv *shttp.Service) error {
+	service := goarchttp.NewService(
+		goarchttp.ServiceName(cfg.GetString("name")),
+		goarchttp.ServicePort(cfg.GetInt("server.port")),
+		goarchttp.ServiceShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
+		goarchttp.App(
+			func(srv *goarchttp.Service) error {
 				srv.Register(
 					"/examples",
 					http.MethodPost,

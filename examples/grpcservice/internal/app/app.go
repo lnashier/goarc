@@ -1,11 +1,11 @@
 package app
 
 import (
-	"github.com/lnashier/goarc/grpc"
+	goarcgrpc "github.com/lnashier/goarc/grpc"
 	"grpcservice/internal/app/echo"
 )
 
-func App(srv *grpc.Service) error {
+func App(srv *goarcgrpc.Service) error {
 	echo.Register(srv)
 	return nil
 }

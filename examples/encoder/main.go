@@ -6,14 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/lnashier/goarc"
-	"github.com/lnashier/goarc/cli"
+	goarccli "github.com/lnashier/goarc/cli"
 )
 
 func main() {
-	goarc.Up(cli.NewService(
-		cli.ServiceName("encoder"),
-		cli.App(
-			func(svc *cli.Service) error {
+	goarc.Up(goarccli.NewService(
+		goarccli.ServiceName("encoder"),
+		goarccli.App(
+			func(svc *goarccli.Service) error {
 				svc.Register("base64encode", func(ctx context.Context, args []string) error {
 					if len(args) > 0 {
 						fmt.Println(base64.StdEncoding.EncodeToString([]byte(args[0])))

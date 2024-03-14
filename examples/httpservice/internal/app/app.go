@@ -1,12 +1,12 @@
 package app
 
 import (
-	shttp "github.com/lnashier/goarc/http"
+	goarchttp "github.com/lnashier/goarc/http"
 	xhttp "github.com/lnashier/goarc/x/http"
 	"net/http"
 )
 
-func App(srv *shttp.Service) error {
+func App(srv *goarchttp.Service) error {
 	ctr, err := NewController()
 	if err != nil {
 		return err

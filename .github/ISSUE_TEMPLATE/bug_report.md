@@ -14,6 +14,7 @@ Please see the Examples in our main README.md, then answer the questions below b
 ### What operating system (Linux, Windows, …) and version?
 
 ### What did you do?
+
 If possible, provide a recipe for reproducing the error.
 
 ### What did you expect to see?

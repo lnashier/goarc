@@ -2,14 +2,14 @@ package app
 
 import (
 	"github.com/gorilla/websocket"
-	shttp "github.com/lnashier/goarc/http"
+	goarchttp "github.com/lnashier/goarc/http"
 	xhttp "github.com/lnashier/goarc/x/http"
 	"net/http"
 	"time"
 	"websocketapp/internal/app/echo"
 )
 
-func App(srv *shttp.Service) error {
+func App(srv *goarchttp.Service) error {
 	upgrader := &websocket.Upgrader{
 		HandshakeTimeout:  time.Duration(1000) * time.Millisecond,
 		ReadBufferSize:    1024,

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/lnashier/goarc"
-	shttp "github.com/lnashier/goarc/http"
+	goarchttp "github.com/lnashier/goarc/http"
 	"github.com/lnashier/goarc/x/buildinfo"
 	"github.com/lnashier/goarc/x/health"
 	"multiapps/apps/echo"
@@ -12,11 +12,11 @@ import (
 
 func main() {
 	goarc.Up(
-		shttp.NewService(
-			shttp.ServiceName("multiapps"),
-			shttp.ServicePort(8080),
-			shttp.ServiceShutdownGracetime(time.Duration(1)*time.Second),
-			shttp.App(hello.App, echo.App, health.App, buildinfo.App),
+		goarchttp.NewService(
+			goarchttp.ServiceName("multiapps"),
+			goarchttp.ServicePort(8080),
+			goarchttp.ServiceShutdownGracetime(time.Duration(1)*time.Second),
+			goarchttp.App(health.App, buildinfo.App, hello.App, echo.App),
 		),
 	)
 }
