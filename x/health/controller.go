@@ -18,18 +18,18 @@ func (hc *Controller) Stop() {
 	close(hc.done)
 }
 
-// LiveHandler handles the HTTP request for the live endpoint,
+// Live handles the HTTP request for the live endpoint,
 // indicating that the service is up and running.
 // This should not be used for load-balancer purposes.
-func (hc *Controller) LiveHandler(w http.ResponseWriter, _ *http.Request) {
+func (hc *Controller) Live(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(http.StatusText(http.StatusOK)))
 }
 
-// ReadyHandler handles the HTTP request for the ready endpoint,
+// Ready handles the HTTP request for the ready endpoint,
 // indicating whether the service is ready to accept new connections.
 // This should be used for load-balancer purposes.
-func (hc *Controller) ReadyHandler(w http.ResponseWriter, _ *http.Request) {
+func (hc *Controller) Ready(w http.ResponseWriter, _ *http.Request) {
 	select {
 	case <-hc.done:
 		w.WriteHeader(http.StatusNotFound)

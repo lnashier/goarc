@@ -8,7 +8,6 @@ import (
 	"github.com/lnashier/goarc/x/config"
 	"github.com/lnashier/goarc/x/env"
 	xhttp "github.com/lnashier/goarc/x/http"
-	"github.com/lnashier/goarc/x/zson"
 	"net/http"
 	"time"
 )
@@ -28,7 +27,7 @@ func main() {
 					&CustomHandler{
 						"application/json; charset=UTF-8",
 						func(req *http.Request) (any, error) {
-							return zson.Marshal(map[string]string{
+							return json.Marshal(map[string]string{
 								"msgId": "mock-msg-id",
 							}), nil
 						},

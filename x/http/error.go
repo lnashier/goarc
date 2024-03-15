@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+	xjson "github.com/lnashier/goarc/x/json"
 	"net/http"
 )
 
@@ -19,7 +20,7 @@ func HandleError(w http.ResponseWriter, err error) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(httpErr.Status)
-	w.Write(marshal(httpErr))
+	w.Write(xjson.Marshal(httpErr))
 }
 
 // Error represents an HTTP error with an underlying error cause

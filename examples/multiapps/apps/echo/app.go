@@ -9,13 +9,13 @@ import (
 
 func App(srv *goarchttp.Service) error {
 	srv.Register("/echo", http.MethodPost, &xhttp.JSONHandler{Route: func(req *http.Request) (any, error) {
-		echoReq := &EchoRequest{}
+		echoReq := &Request{}
 		err := xhttp.RequestParse(req, echoReq)
 		if err != nil {
 			return xhttp.BadRequestf(err, err.Error())
 		}
 
-		return EchoResponse{
+		return Response{
 			Message: echoReq.Message,
 		}, nil
 
@@ -24,17 +24,17 @@ func App(srv *goarchttp.Service) error {
 	return nil
 }
 
-type EchoRequest struct {
+type Request struct {
 	Message string `json:"message"`
 }
 
-func (er EchoRequest) Validate(*http.Request) error {
+func (er Request) Validate(*http.Request) error {
 	if len(er.Message) < 1 {
 		return errors.New("missing message")
 	}
 	return nil
 }
 
-type EchoResponse struct {
+type Response struct {
 	Message string `json:"message"`
 }

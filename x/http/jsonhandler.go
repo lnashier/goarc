@@ -1,6 +1,7 @@
 package http
 
 import (
+	xjson "github.com/lnashier/goarc/x/json"
 	"net/http"
 )
 
@@ -17,5 +18,5 @@ func (h *JSONHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write(marshal(result))
+	w.Write(xjson.Marshal(result))
 }

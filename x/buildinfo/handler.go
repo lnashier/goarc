@@ -2,7 +2,7 @@ package buildinfo
 
 import (
 	"github.com/lnashier/goarc/x/env"
-	"github.com/lnashier/goarc/x/zson"
+	xjson "github.com/lnashier/goarc/x/json"
 	"net/http"
 	"time"
 )
@@ -33,7 +33,7 @@ type Report map[Key]any
 // Reporter provides build-info report
 type Reporter func() Report
 
-// Client provides Key build information about current service:
+// Handler provides Key build information about current service:
 //
 //	KeyHost
 //	KeyVersion
@@ -43,32 +43,32 @@ type Reporter func() Report
 //
 // Custom Reporter can override all the Report Key since it runs after inbuilt reporter,
 // Custom Reporter can override the default reporting keys, it runs after the built-in reporter.
-type Client struct {
+type Handler struct {
 	r         Reporter
 	host      string
 	startTime time.Time
 }
 
-func New(r ...Reporter) *Client {
+func New(r ...Reporter) *Handler {
 	var r1 Reporter
 	if len(r) > 0 {
 		r1 = r[0]
 	}
-	return &Client{
+	return &Handler{
 		r:         r1,
 		host:      env.Hostname(),
 		startTime: time.Now(),
 	}
 }
 
-// ServeHTTP makes Client http.Handler
-func (c *Client) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
+// ServeHTTP makes Handler http.Handler
+func (c *Handler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Add("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write(zson.Marshal(c.report()))
+	w.Write(xjson.Marshal(c.report()))
 }
 
-func (c *Client) report() Report {
+func (c *Handler) report() Report {
 	report := Report{
 		KeyHost:      c.host,
 		KeyVersion:   Version,

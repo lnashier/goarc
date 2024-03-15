@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/lnashier/goarc/x/buildinfo"
 	"github.com/lnashier/goarc/x/env"
-	"github.com/lnashier/goarc/x/zson"
+	xjson "github.com/lnashier/goarc/x/json"
 	"log"
 	"os"
 	"time"
@@ -45,10 +45,10 @@ const (
 // Logger can be used simultaneously from multiple goroutines.
 // Its zero value (DefaultLogger) is a usable object that uses os.Stdout to output log lines.
 type Logger struct {
-	AppName  string
-	Hostname string
-	Hash     string
-	Logger   *log.Logger
+	ServiceName string
+	Hostname    string
+	Hash        string
+	Logger      *log.Logger
 	// Verifier verifies if provided logging Level is enabled
 	// PanicLevel is always enabled
 	Verifier func(Level) bool
@@ -57,12 +57,13 @@ type Logger struct {
 }
 
 // DefaultLogger is the default Logger and is used by Debug, Info, Error and Panic.
+// It is ready to use except that
 var DefaultLogger = func() *Logger {
 	return &Logger{
-		Hostname: env.Hostname(),
-		AppName:  "unknown",
-		Hash:     buildinfo.Hash[:len(buildinfo.Hash)/2],
-		Logger:   log.New(os.Stdout, "", 0),
+		Hostname:    env.Hostname(),
+		ServiceName: "unknown",
+		Hash:        buildinfo.Hash[:len(buildinfo.Hash)/2],
+		Logger:      log.New(os.Stdout, "", 0),
 		Verifier: func(a Level) bool {
 			return true
 		},
@@ -118,21 +119,21 @@ func (l *Logger) log(level Level, logType Type, msg any) {
 	if logType == NetType || level == PanicLevel || l.Verifier(level) {
 		e := &Entry{
 			Hostname:  l.Hostname,
-			App:       l.AppName,
+			Service:   l.ServiceName,
 			Hash:      l.Hash,
 			Timestamp: time.Now().Format(time.RFC3339),
 			LogType:   string(logType),
 			Level:     string(level),
 			Message:   msg,
 		}
-		l.Logger.Print(string(zson.Marshal(e)))
+		l.Logger.Print(string(xjson.Marshal(e)))
 		l.Publisher(e)
 	}
 }
 
 type Entry struct {
 	Hostname  string `json:"hostname"`
-	App       string `json:"app"`
+	Service   string `json:"service"`
 	Hash      string `json:"hash"`
 	Timestamp string `json:"timestamp"`
 	LogType   string `json:"logType"`

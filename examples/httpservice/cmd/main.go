@@ -23,8 +23,8 @@ func main() {
 					// Register health controller for shutdown signal
 					srv.Component(ctr)
 					// Custom endpoints
-					srv.Register("/alive", http.MethodGet, http.HandlerFunc(ctr.LiveHandler))
-					srv.Register("/ready", http.MethodGet, http.HandlerFunc(ctr.ReadyHandler))
+					srv.Register("/alive", http.MethodGet, http.HandlerFunc(ctr.Live))
+					srv.Register("/ready", http.MethodGet, http.HandlerFunc(ctr.Ready))
 					return nil
 				},
 			),
