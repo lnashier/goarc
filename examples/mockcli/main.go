@@ -16,6 +16,7 @@ func main() {
 		goarccli.App(
 			func(svc *goarccli.Service) error {
 				svc.Register("echo", func(ctx context.Context, args []string) error {
+					fmt.Println("going to echo after 10 seconds")
 					xtime.SleepWithContext(ctx, time.Duration(10)*time.Second)
 
 					if len(args) > 0 {

@@ -12,7 +12,7 @@ func App(srv *goarchttp.Service) error {
 		echoReq := &Request{}
 		err := xhttp.RequestParse(req, echoReq)
 		if err != nil {
-			return xhttp.BadRequestf(err, err.Error())
+			return nil, xhttp.BadRequestf(err, err.Error())
 		}
 
 		return &Response{

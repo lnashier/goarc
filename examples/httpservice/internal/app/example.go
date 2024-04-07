@@ -12,7 +12,7 @@ func (c Controller) SaveExample(req *http.Request) (any, error) {
 	exampleReq := &SaveExampleRequest{}
 	err := xhttp.RequestParse(req, exampleReq)
 	if err != nil {
-		return xhttp.BadRequestf(err, err.Error())
+		return nil, xhttp.BadRequestf(err, err.Error())
 	}
 
 	msgID := md5.Sum([]byte(exampleReq.Data))
@@ -27,7 +27,7 @@ func (c Controller) GetExample(req *http.Request) (any, error) {
 
 	data, ok := c.store[msgID]
 	if ok {
-		return xhttp.NotFound(nil)
+		return nil, xhttp.NotFound(nil)
 	}
 	return data, nil
 }

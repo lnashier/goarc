@@ -5,8 +5,10 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/lnashier/goarc"
 	goarchttp "github.com/lnashier/goarc/http"
+	"github.com/lnashier/goarc/x/buildinfo"
 	"github.com/lnashier/goarc/x/config"
 	"github.com/lnashier/goarc/x/env"
+	"github.com/lnashier/goarc/x/health"
 	xhttp "github.com/lnashier/goarc/x/http"
 	xjson "github.com/lnashier/goarc/x/json"
 	"net/http"
@@ -21,6 +23,8 @@ func main() {
 		goarchttp.ServicePort(cfg.GetInt("server.port")),
 		goarchttp.ServiceShutdownGracetime(time.Duration(cfg.GetInt("server.shutdown.gracetime"))*time.Second),
 		goarchttp.App(
+			health.App,
+			buildinfo.App,
 			func(srv *goarchttp.Service) error {
 				srv.Register(
 					"/examples",
@@ -66,13 +70,13 @@ func GetConfig() *config.Config {
 
 type CustomHandler struct {
 	ContentType string
-	Route       xhttp.Route
+	Route       func(*http.Request) (any, error)
 }
 
-func (h *CustomHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	result, err := h.Route(req)
+func (h *CustomHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	result, err := h.Route(r)
 	if err != nil {
-		xhttp.HandleError(w, err)
+		xhttp.ConvertError(err).WriteJSON(w)
 		return
 	}
 	w.Header().Set("Content-Type", h.ContentType)
