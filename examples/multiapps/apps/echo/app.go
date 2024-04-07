@@ -8,18 +8,17 @@ import (
 )
 
 func App(srv *goarchttp.Service) error {
-	srv.Register("/echo", http.MethodPost, &xhttp.JSONHandler{Route: func(req *http.Request) (any, error) {
+	srv.Register("/echo", http.MethodPost, xhttp.JSONHandler(func(req *http.Request) (any, error) {
 		echoReq := &Request{}
 		err := xhttp.RequestParse(req, echoReq)
 		if err != nil {
 			return xhttp.BadRequestf(err, err.Error())
 		}
 
-		return Response{
+		return &Response{
 			Message: echoReq.Message,
 		}, nil
-
-	}})
+	}))
 
 	return nil
 }

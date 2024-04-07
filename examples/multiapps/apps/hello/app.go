@@ -7,9 +7,9 @@ import (
 )
 
 func App(srv *goarchttp.Service) error {
-	srv.Register("/hello", http.MethodGet, &xhttp.JSONHandler{Route: func(req *http.Request) (any, error) {
+	srv.Register("/hello", http.MethodGet, xhttp.JSONHandler(func(req *http.Request) (any, error) {
 		return map[string]string{"message": "Hello! World"}, nil
-	}})
+	}))
 
 	return nil
 }

@@ -22,6 +22,7 @@ func main() {
 						fmt.Println(args[0])
 						return nil
 					}
+
 					return errors.New("nothing to echo")
 				})
 

@@ -12,8 +12,8 @@ func App(srv *goarchttp.Service) error {
 		return err
 	}
 
-	srv.Register("/examples", http.MethodPost, &xhttp.JSONHandler{Route: ctr.SaveExample})
-	srv.Register("/examples/{id}", http.MethodGet, &xhttp.TextHandler{Route: ctr.GetExample})
+	srv.Register("/examples", http.MethodPost, xhttp.JSONHandler(ctr.SaveExample))
+	srv.Register("/examples/{id}", http.MethodGet, xhttp.JSONHandler(ctr.GetExample))
 
 	return nil
 }

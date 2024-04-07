@@ -22,13 +22,13 @@ func App(srv *goarchttp.Service) error {
 	srv.Register("/echo", http.MethodGet, http.HandlerFunc(
 		func(w http.ResponseWriter, req *http.Request) {
 			if ok := websocket.IsWebSocketUpgrade(req); !ok {
-				xhttp.HandleError(w, xhttp.NewError(http.StatusNotAcceptable, "", nil))
+				xhttp.NewError(http.StatusNotAcceptable, "", nil).WriteJSON(w)
 				return
 			}
 
 			conn, err := upgrader.Upgrade(w, req, nil)
 			if err != nil {
-				xhttp.HandleError(w, xhttp.NewError(http.StatusBadRequest, err.Error(), err))
+				xhttp.NewError(http.StatusBadRequest, err.Error(), err).WriteJSON(w)
 				return
 			}
 			defer conn.Close()
@@ -42,7 +42,7 @@ func App(srv *goarchttp.Service) error {
 			srv.Component(echoer)
 
 			if err = echoer.Run(); err != nil {
-				xhttp.HandleError(w, xhttp.NewError(http.StatusInternalServerError, err.Error(), err))
+				xhttp.NewError(http.StatusInternalServerError, err.Error(), err).WriteJSON(w)
 				return
 			}
 		},

@@ -8,6 +8,7 @@ import (
 	"github.com/lnashier/goarc/x/config"
 	"github.com/lnashier/goarc/x/env"
 	xhttp "github.com/lnashier/goarc/x/http"
+	xjson "github.com/lnashier/goarc/x/json"
 	"net/http"
 	"time"
 )
@@ -25,9 +26,9 @@ func main() {
 					"/examples",
 					http.MethodPost,
 					&CustomHandler{
-						"application/json; charset=UTF-8",
-						func(req *http.Request) (any, error) {
-							return json.Marshal(map[string]string{
+						ContentType: "application/json; charset=UTF-8",
+						Route: func(req *http.Request) (any, error) {
+							return xjson.Marshal(map[string]string{
 								"msgId": "mock-msg-id",
 							}), nil
 						},
@@ -38,8 +39,8 @@ func main() {
 					"/examples",
 					http.MethodGet,
 					&CustomHandler{
-						"text/plain; charset=UTF-8",
-						func(req *http.Request) (any, error) {
+						ContentType: "text/plain; charset=UTF-8",
+						Route: func(req *http.Request) (any, error) {
 							return []byte("mock-data"), nil
 						},
 					},

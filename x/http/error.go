@@ -1,26 +1,23 @@
 package http
 
 import (
+	"errors"
 	"fmt"
 	xjson "github.com/lnashier/goarc/x/json"
 	"net/http"
 )
 
-// HandleError writes provided error to ResponseWriter in JSON format.
-// If error is not of type Error, error is converted to InternalServerError
-func HandleError(w http.ResponseWriter, err error) {
-	var httpErr *Error
-	switch specificError := err.(type) {
-	case *Error:
-		httpErr = specificError
-	default:
-		// default for unknown errors is 500 with no client-facing message
-		httpErr = NewError(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), err)
+// ConvertError translates ordinary error to Error with http.StatusInternalServerError.
+// If err is already of type Error, it is returned without modifications.
+func ConvertError(err error) *Error {
+	if err == nil {
+		return nil
 	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(httpErr.Status)
-	w.Write(xjson.Marshal(httpErr))
+	var e *Error
+	if errors.As(err, &e) {
+		return e
+	}
+	return NewError(http.StatusInternalServerError, http.StatusText(http.StatusInternalServerError), err)
 }
 
 // Error represents an HTTP error with an underlying error cause
@@ -30,26 +27,36 @@ type Error struct {
 	Cause   error  `json:"-"`
 }
 
-func (err Error) String() string {
+// WriteJSON writes the error to ResponseWriter in JSON format.
+func (err *Error) WriteJSON(w http.ResponseWriter) (int, error) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(err.Status)
+	return w.Write(xjson.Marshal(err))
+}
+
+// WriteText writes the error to ResponseWriter in text format.
+func (err *Error) WriteText(w http.ResponseWriter) (int, error) {
+	w.Header().Set("Content-Type", "text/plain; charset=UTF-8")
+	w.WriteHeader(err.Status)
+	return w.Write([]byte(err.Message))
+}
+
+func (err *Error) String() string {
 	return err.Error()
 }
 
-func (err Error) Error() string {
+func (err *Error) Error() string {
 	if err.Cause != nil {
 		return fmt.Sprintf("%d %s caused by %s", err.Status, err.Message, err.Cause.Error())
 	}
 	return fmt.Sprintf("%d %s", err.Status, err.Message)
 }
 
-func (err Error) Unwrap() error {
+func (err *Error) Unwrap() error {
 	return err.Cause
 }
 
-// NewError builds a new http.Error instance
-//
-// The 'message' parameter is what gets returned in our standard error response.
-// Overall, we don't want to give away internal details of most errors;
-// but in the case of a 400, it's customary to tell callers what they did wrong.
+// NewError builds a new Error instance
 func NewError(status int, message string, cause error) *Error {
 	return &Error{
 		Status:  status,
@@ -59,9 +66,7 @@ func NewError(status int, message string, cause error) *Error {
 }
 
 // NewErrorf builds a new HTTPError instance.
-//
 // Similar usage as NewError.
-//
 // The 'message' param is a format specifier.
 func NewErrorf(status int, cause error, message string, args ...any) *Error {
 	return &Error{
@@ -79,112 +84,112 @@ func Is4xx(err error) (int, bool) {
 	return herr.Status, herr.Status >= 400 && herr.Status < 500
 }
 
-func NotFound(err error) (any, error) {
-	return nil, &Error{
+func NotFound(err error) error {
+	return &Error{
 		Status:  http.StatusNotFound,
 		Message: http.StatusText(http.StatusNotFound),
 		Cause:   err,
 	}
 }
 
-func NotFoundf(err error, format string, v ...any) (any, error) {
-	return nil, &Error{
+func NotFoundf(err error, format string, v ...any) error {
+	return &Error{
 		Status:  http.StatusNotFound,
 		Message: fmt.Sprintf(format, v...),
 		Cause:   err,
 	}
 }
 
-func Conflict(err error) (any, error) {
-	return nil, &Error{
+func Conflict(err error) error {
+	return &Error{
 		Status:  http.StatusConflict,
 		Message: http.StatusText(http.StatusConflict),
 		Cause:   err,
 	}
 }
 
-func Conflictf(err error, format string, v ...any) (any, error) {
-	return nil, &Error{
+func Conflictf(err error, format string, v ...any) error {
+	return &Error{
 		Status:  http.StatusConflict,
 		Message: fmt.Sprintf(format, v...),
 		Cause:   err,
 	}
 }
 
-func BadRequest(err error) (any, error) {
-	return nil, &Error{
+func BadRequest(err error) error {
+	return &Error{
 		Status:  http.StatusBadRequest,
 		Message: http.StatusText(http.StatusBadRequest),
 		Cause:   err,
 	}
 }
 
-func BadRequestf(err error, format string, v ...any) (any, error) {
-	return nil, &Error{
+func BadRequestf(err error, format string, v ...any) error {
+	return &Error{
 		Status:  http.StatusBadRequest,
 		Message: fmt.Sprintf(format, v...),
 		Cause:   err,
 	}
 }
 
-func UnprocessableEntity(err error) (any, error) {
-	return nil, &Error{
+func UnprocessableEntity(err error) error {
+	return &Error{
 		Status:  http.StatusUnprocessableEntity,
 		Message: http.StatusText(http.StatusUnprocessableEntity),
 		Cause:   err,
 	}
 }
 
-func UnprocessableEntityf(err error, format string, v ...any) (any, error) {
-	return nil, &Error{
+func UnprocessableEntityf(err error, format string, v ...any) error {
+	return &Error{
 		Status:  http.StatusUnprocessableEntity,
 		Message: fmt.Sprintf(format, v...),
 		Cause:   err,
 	}
 }
 
-func PreconditionFailed(err error) (any, error) {
-	return nil, &Error{
+func PreconditionFailed(err error) error {
+	return &Error{
 		Status:  http.StatusPreconditionFailed,
 		Message: http.StatusText(http.StatusPreconditionFailed),
 		Cause:   err,
 	}
 }
 
-func PreconditionFailedf(err error, format string, v ...any) (any, error) {
-	return nil, &Error{
+func PreconditionFailedf(err error, format string, v ...any) error {
+	return &Error{
 		Status:  http.StatusPreconditionFailed,
 		Message: fmt.Sprintf(format, v...),
 		Cause:   err,
 	}
 }
 
-func PreconditionRequired(err error) (any, error) {
-	return nil, &Error{
+func PreconditionRequired(err error) error {
+	return &Error{
 		Status:  http.StatusPreconditionRequired,
 		Message: http.StatusText(http.StatusPreconditionRequired),
 		Cause:   err,
 	}
 }
 
-func PreconditionRequiredf(err error, format string, v ...any) (any, error) {
-	return nil, &Error{
+func PreconditionRequiredf(err error, format string, v ...any) error {
+	return &Error{
 		Status:  http.StatusPreconditionRequired,
 		Message: fmt.Sprintf(format, v...),
 		Cause:   err,
 	}
 }
 
-func Internal(err error) (any, error) {
-	return nil, &Error{
+func Internal(err error) error {
+	return &Error{
 		Status:  http.StatusInternalServerError,
 		Message: http.StatusText(http.StatusInternalServerError),
 		Cause:   err,
 	}
 }
 
-func Internalf(err error, format string, v ...any) (any, error) {
-	return nil, &Error{
+func Internalf(err error, format string, v ...any) error {
+	return &Error{
 		Status:  http.StatusInternalServerError,
 		Message: fmt.Sprintf(format, v...),
 		Cause:   err,

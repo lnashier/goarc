@@ -17,3 +17,79 @@ import "github.com/lnashier/goarc"
 ## Examples
 
 [Examples](examples/README.md)
+
+## Toy HTTP Example
+
+```go
+package main
+
+import (
+	"github.com/lnashier/goarc"
+	goarchttp "github.com/lnashier/goarc/http"
+	xhttp "github.com/lnashier/goarc/x/http"
+	"net/http"
+	"time"
+)
+
+func main() {
+	goarc.Up(goarchttp.NewService(
+		goarchttp.ServiceName("toy"),
+		goarchttp.ServicePort(8080),
+		goarchttp.ServiceShutdownGracetime(2*time.Second),
+		goarchttp.App(func(srv *goarchttp.Service) error {
+
+			// BYO http.Handler
+			srv.Register("/toys/1", http.MethodGet, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("Hello World!"))
+			}))
+
+			// Use pre-assembled http.Handler to work with JSON response type
+			srv.Register("/toys/2", http.MethodGet, xhttp.JSONHandler(func(r *http.Request) (any, error) {
+				return []string{"Hello World!"}, nil
+			}))
+
+			return nil
+		}),
+	))
+}
+```
+
+
+## Toy CLI Example
+
+```go
+package main
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"github.com/lnashier/goarc"
+	goarccli "github.com/lnashier/goarc/cli"
+	xtime "github.com/lnashier/goarc/x/time"
+	"time"
+)
+
+func main() {
+	goarc.Up(goarccli.NewService(
+		goarccli.ServiceName("mockcli"),
+		goarccli.App(
+			func(svc *goarccli.Service) error {
+				svc.Register("echo", func(ctx context.Context, args []string) error {
+					xtime.SleepWithContext(ctx, time.Duration(10)*time.Second)
+
+					if len(args) > 0 {
+						fmt.Println(args[0])
+						return nil
+					}
+
+					return errors.New("nothing to echo")
+				})
+
+				return nil
+			},
+		),
+	))
+}
+```

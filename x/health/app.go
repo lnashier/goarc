@@ -2,6 +2,7 @@ package health
 
 import (
 	shttp "github.com/lnashier/goarc/http"
+	xhttp "github.com/lnashier/goarc/x/http"
 	"net/http"
 )
 
@@ -12,7 +13,11 @@ import (
 func App(srv *shttp.Service) error {
 	ctr := New()
 	srv.Component(ctr)
-	srv.Register("/alive", http.MethodGet, http.HandlerFunc(ctr.Live))
-	srv.Register("/ready", http.MethodGet, http.HandlerFunc(ctr.Ready))
+	srv.Register("/alive", http.MethodGet, xhttp.TextHandler(func(*http.Request) (string, error) {
+		return ctr.Live(), nil
+	}))
+	srv.Register("/ready", http.MethodGet, xhttp.TextHandler(func(*http.Request) (string, error) {
+		return ctr.Ready()
+	}))
 	return nil
 }

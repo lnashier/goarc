@@ -1,7 +1,7 @@
 package health
 
 import (
-	"net/http"
+	xhttp "github.com/lnashier/goarc/x/http"
 )
 
 type Controller struct {
@@ -21,21 +21,18 @@ func (hc *Controller) Stop() {
 // Live handles the HTTP request for the live endpoint,
 // indicating that the service is up and running.
 // This should not be used for load-balancer purposes.
-func (hc *Controller) Live(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(http.StatusText(http.StatusOK)))
+func (hc *Controller) Live() string {
+	return "up"
 }
 
 // Ready handles the HTTP request for the ready endpoint,
 // indicating whether the service is ready to accept new connections.
 // This should be used for load-balancer purposes.
-func (hc *Controller) Ready(w http.ResponseWriter, _ *http.Request) {
+func (hc *Controller) Ready() (string, error) {
 	select {
 	case <-hc.done:
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(http.StatusText(http.StatusNotFound)))
+		return "", xhttp.NotFoundf(nil, "service not found")
 	default:
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(http.StatusText(http.StatusOK)))
+		return "up", nil
 	}
 }
