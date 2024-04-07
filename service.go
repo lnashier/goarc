@@ -1,5 +1,6 @@
 package goarc
 
+// Service represents a generic service that goarc framework can Start and Stop.
 type Service interface {
 	// Start should initiate the startup of the service.
 	// It returns an error if the startup process encounters any issues.
