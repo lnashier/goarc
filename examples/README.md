@@ -1,5 +1,7 @@
 # Examples
 
+- Example BYO Service [[README](byoservice/README.md)]
+- Example BYO Function [[README](byofunction/README.md)]
 - Example CLI Service 1 [[README](encoder/README.md)]
 - Example CLI Service 2 [[README](mockcli/README.md)]
 - Example HTTP Service 1 [[README](mockhttp/README.md)]
