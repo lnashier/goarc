@@ -16,7 +16,7 @@ import "github.com/lnashier/goarc"
 
 ## Examples
 
-[Examples](examples/README.md)
+[Examples](examples/)
 
 ## Toy HTTP Example
 
