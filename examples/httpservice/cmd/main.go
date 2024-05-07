@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/lnashier/goarc"
 	goarchttp "github.com/lnashier/goarc/http"
 	"github.com/lnashier/goarc/x/health"
@@ -15,7 +16,7 @@ func main() {
 		goarchttp.NewService(
 			goarchttp.ServiceName("httpservice"),
 			goarchttp.ServicePort(8080),
-			goarchttp.ServiceShutdownGracetime(time.Duration(10)*time.Second),
+			goarchttp.ServiceShutdownGracetime(time.Duration(1)*time.Second),
 			goarchttp.App(
 				app.App,
 				func(srv *goarchttp.Service) error {
@@ -40,5 +41,11 @@ func main() {
 				},
 			),
 		),
+		goarc.OnStart(func(err error) {
+			fmt.Println("Start Err: ", err)
+		}),
+		goarc.OnStop(func(err error) {
+			fmt.Println("Stop Err: ", err)
+		}),
 	)
 }

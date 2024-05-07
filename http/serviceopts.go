@@ -18,8 +18,8 @@ type serviceOpts struct {
 	apps              []func(*Service) error
 }
 
-func (s *serviceOpts) apply(opts []ServiceOpt) {
-	for _, o := range opts {
+func (s *serviceOpts) apply(opt ...ServiceOpt) {
+	for _, o := range opt {
 		o(s)
 	}
 }

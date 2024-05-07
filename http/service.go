@@ -22,7 +22,7 @@ type Service struct {
 
 func NewService(opt ...ServiceOpt) *Service {
 	opts := defaultServiceOpts
-	opts.apply(opt)
+	opts.apply(opt...)
 
 	preempt := negroni.New()
 
