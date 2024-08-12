@@ -1,6 +1,7 @@
 package goarc
 
 import (
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -23,11 +24,16 @@ func Up(s Service, opt ...BootOpt) {
 
 	go func(s Service) {
 		sig := make(chan os.Signal, 1)
+
 		// e.g. kill -SIGQUIT <pid>
 		// Notify the channel for the specified signals
 		signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGABRT)
+
 		// Block until a signal is received
-		<-sig
+		select {
+		case <-opts.ctx.Done():
+		case <-sig:
+		}
 		ch = make(chan error)
 		// Attempt to stop the service
 		ch <- s.Stop()
@@ -44,6 +50,7 @@ func Up(s Service, opt ...BootOpt) {
 type BootOpt func(*bootOpts)
 
 type bootOpts struct {
+	ctx     context.Context
 	onStart func(error)
 	onStop  func(error)
 }
@@ -55,6 +62,8 @@ func (b *bootOpts) apply(opt ...BootOpt) {
 }
 
 var defaultBootOpts = bootOpts{
+	// An empty Context. It is never canceled, has no values, and has no deadline.
+	ctx: context.Background(),
 	// If an error occurs during startup, exit with a non-zero status code
 	onStart: func(err error) {
 		if err != nil {
@@ -67,6 +76,12 @@ var defaultBootOpts = bootOpts{
 			os.Exit(1)
 		}
 	},
+}
+
+func Context(ctx context.Context) BootOpt {
+	return func(b *bootOpts) {
+		b.ctx = ctx
+	}
 }
 
 func OnStart(f func(error)) BootOpt {

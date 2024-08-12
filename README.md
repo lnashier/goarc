@@ -10,7 +10,7 @@ The goarc is an idiomatic Go applications framework that focuses on application 
 Simply add the following import to your code, and then `go [build|run|test]` will automatically fetch the necessary
 dependencies:
 
-```go
+```
 import "github.com/lnashier/goarc"
 ```
 
@@ -20,7 +20,7 @@ import "github.com/lnashier/goarc"
 
 ## Toy HTTP Example
 
-```go
+```
 package main
 
 import (
@@ -63,7 +63,7 @@ func main() {
 
 ## Toy CLI Example
 
-```go
+```
 package main
 
 import (
