@@ -1,6 +1,6 @@
 module httpservice
 
-go 1.22.0
+go 1.24.1
 
 replace github.com/lnashier/goarc => ../../../goarc
 
