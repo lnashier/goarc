@@ -2,9 +2,10 @@ package app
 
 import (
 	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	"github.com/gorilla/mux"
-	xhttp "github.com/lnashier/goarc/x/http"
+	xhttp "github.com/lnashier/goarc/v2/x/http"
 	"net/http"
 )
 
@@ -12,13 +13,16 @@ func (c Controller) SaveExample(req *http.Request) (any, error) {
 	exampleReq := &SaveExampleRequest{}
 	err := xhttp.RequestParse(req, exampleReq)
 	if err != nil {
-		return nil, xhttp.BadRequestf(err, err.Error())
+		return nil, xhttp.BadRequestf(err, "%s", err.Error())
 	}
 
-	msgID := md5.Sum([]byte(exampleReq.Data))
+	sum := md5.Sum([]byte(exampleReq.Data))
+	msgID := hex.EncodeToString(sum[:])
+
+	c.store[msgID] = exampleReq.Data
 
 	return &SaveExampleResponse{
-		MsgID: string(msgID[:]),
+		MsgID: msgID,
 	}, nil
 }
 
@@ -26,7 +30,7 @@ func (c Controller) GetExample(req *http.Request) (any, error) {
 	msgID := mux.Vars(req)["id"]
 
 	data, ok := c.store[msgID]
-	if ok {
+	if !ok {
 		return nil, xhttp.NotFound(nil)
 	}
 	return data, nil

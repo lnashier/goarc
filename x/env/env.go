@@ -2,6 +2,7 @@ package env
 
 import (
 	"os"
+	"sync"
 )
 
 const (
@@ -28,27 +29,32 @@ func (e Environment) String() string {
 	return string(e)
 }
 
-var environment Environment
-
-func Get() Environment {
-	if environment == "" {
-		env, ok := os.LookupEnv("ENV")
-		if !ok {
-			env = Local
-		}
-		environment = Environment(env)
+func parseEnv() Environment {
+	v, ok := os.LookupEnv("ENV")
+	if !ok {
+		v = Local
 	}
-	return environment
+	return Environment(v)
 }
 
+var getOnce = sync.OnceValue(parseEnv)
+
+// Get returns the process's Environment, read from the ENV environment
+// variable once and cached for the lifetime of the process; it defaults to
+// Local if ENV is unset.
+func Get() Environment {
+	return getOnce()
+}
+
+// Hostname returns "localhost" when Get().IsLocal(), otherwise the
+// machine's hostname (or the lookup error's message, if it fails).
 func Hostname() string {
 	if Get().IsLocal() {
 		return "localhost"
 	}
-	var hostname string
-	var err error
-	if hostname, err = os.Hostname(); err != nil {
-		hostname = err.Error()
+	hostname, err := os.Hostname()
+	if err != nil {
+		return err.Error()
 	}
 	return hostname
 }

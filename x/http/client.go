@@ -45,7 +45,11 @@ func (c *Client) NewRequest(ctx context.Context, method, path string, header htt
 	var bodyLen int64
 	if body != nil {
 		// some servers are strict on Content-Length header
-		bodyLen, _ = io.Copy(io.Discard, body)
+		n, err := io.Copy(io.Discard, body)
+		if err != nil {
+			return nil, fmt.Errorf("failed to measure request body: %w", err)
+		}
+		bodyLen = n
 		rc = io.NopCloser(body)
 	}
 
@@ -110,9 +114,16 @@ func (c *Client) Do(req *Request, retry *Retry) (*http.Response, error) {
 		time.Sleep(wait)
 	}
 	retry.OnTry(0, retry.Max-remain, retryErr)
+	if retryErr != nil {
+		return nil, fmt.Errorf("%s %s giving up after %d retries: %w", req.Method, req.URL, retry.Max, retryErr)
+	}
 	return nil, fmt.Errorf("%s %s giving up after %d retries", req.Method, req.URL, retry.Max)
 }
 
+// DoDecoded performs req and, for any 2xx response with a non-empty body,
+// decodes the body into result. A non-2xx response is returned as an
+// *Error carrying the response body as its message, regardless of whether
+// the body is empty.
 func (c *Client) DoDecoded(req *Request, result any, retry *Retry) (*http.Response, error) {
 	resp, err := c.Do(req, retry)
 	if err != nil {
@@ -123,25 +134,20 @@ func (c *Client) DoDecoded(req *Request, result any, retry *Retry) (*http.Respon
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return resp, fmt.Errorf("could not read response body: %v", err)
+		return resp, fmt.Errorf("could not read response body: %w", err)
 	}
-
 	resp.Body = io.NopCloser(bytes.NewReader(respBody))
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return resp, NewError(resp.StatusCode, string(respBody), nil)
+	}
 	if len(respBody) == 0 {
 		return resp, nil
 	}
-
-	// Let's first work on successful response
-	if resp.StatusCode == http.StatusOK {
-		// decode to given result only if successful
-		err = c.decoder(respBody, result)
-		if err != nil {
-			return resp, fmt.Errorf("failed to decode response-body: %v", err)
-		}
-		return resp, nil
+	if err := c.decoder(respBody, result); err != nil {
+		return resp, fmt.Errorf("failed to decode response-body: %w", err)
 	}
-
-	return resp, NewError(resp.StatusCode, string(respBody), nil)
+	return resp, nil
 }
 
 func (c *Client) Get(ctx context.Context, path string, header http.Header, retry *Retry) (*http.Response, error) {

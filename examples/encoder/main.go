@@ -5,8 +5,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"github.com/lnashier/goarc"
-	goarccli "github.com/lnashier/goarc/cli"
+	"github.com/lnashier/goarc/v2"
+	goarccli "github.com/lnashier/goarc/v2/cli"
 )
 
 func main() {

@@ -3,6 +3,7 @@ package http
 import (
 	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"net/http"
 )
 
@@ -15,9 +16,13 @@ func (h JSONHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		ConvertError(err).WriteJSON(w)
 		return
 	}
+	data, err := json.Marshal(result)
+	if err != nil {
+		ConvertError(fmt.Errorf("failed to marshal response: %w", err)).WriteJSON(w)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	data, _ := json.Marshal(result)
 	w.Write(data)
 }
 
@@ -41,12 +46,15 @@ type XMLHandler func(*http.Request) (any, error)
 func (h XMLHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	result, err := h(r)
 	if err != nil {
-		// TODO what is the idiomatic conversion that client would expect
 		ConvertError(err).WriteText(w)
+		return
+	}
+	data, err := xml.Marshal(result)
+	if err != nil {
+		ConvertError(fmt.Errorf("failed to marshal response: %w", err)).WriteText(w)
 		return
 	}
 	w.Header().Set("Content-Type", "application/xml; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	data, _ := xml.Marshal(result)
 	w.Write(data)
 }

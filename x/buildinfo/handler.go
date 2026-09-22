@@ -1,10 +1,11 @@
 package buildinfo
 
 import (
-	"github.com/lnashier/goarc/x/env"
-	xjson "github.com/lnashier/goarc/x/json"
 	"net/http"
 	"time"
+
+	"github.com/lnashier/goarc/v2/x/env"
+	xjson "github.com/lnashier/goarc/v2/x/json"
 )
 
 var (
@@ -21,10 +22,10 @@ type Key string
 
 const (
 	KeyHost      Key = "host"
-	KeyStartTime     = "startTime"
-	KeyUptime        = "uptime"
-	KeyVersion       = "version"
-	KeyHash          = "hash"
+	KeyStartTime Key = "startTime"
+	KeyUptime    Key = "uptime"
+	KeyVersion   Key = "version"
+	KeyHash      Key = "hash"
 )
 
 // Report is build-info report
@@ -73,7 +74,7 @@ func (c *Handler) report() Report {
 		KeyHost:      c.host,
 		KeyVersion:   Version,
 		KeyHash:      Hash,
-		KeyStartTime: c.startTime.Format("2006-01-02T15:04:05Z"),
+		KeyStartTime: c.startTime.UTC().Format(time.RFC3339),
 		KeyUptime:    int64(time.Since(c.startTime).Seconds()),
 	}
 

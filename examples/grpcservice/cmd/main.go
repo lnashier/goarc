@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/lnashier/goarc"
-	goarcgrpc "github.com/lnashier/goarc/grpc"
+	"github.com/lnashier/goarc/v2"
+	goarcgrpc "github.com/lnashier/goarc/v2/grpc"
 	"grpcservice/internal/app"
 )
 

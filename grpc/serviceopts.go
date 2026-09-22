@@ -1,8 +1,6 @@
 package grpc
 
-import (
-	"time"
-)
+import "time"
 
 type ServiceOpt func(*serviceOpts)
 
@@ -11,7 +9,7 @@ var defaultServiceOpts = serviceOpts{
 	network:           "tcp",
 	port:              8080,
 	shutdownGracetime: time.Duration(1) * time.Second,
-	apps:              []func(service *Service) error{},
+	apps:              []func(*Service) error{},
 }
 
 type serviceOpts struct {
@@ -22,8 +20,8 @@ type serviceOpts struct {
 	apps              []func(*Service) error
 }
 
-func (s *serviceOpts) apply(opts []ServiceOpt) {
-	for _, o := range opts {
+func (s *serviceOpts) apply(opt ...ServiceOpt) {
+	for _, o := range opt {
 		o(s)
 	}
 }
@@ -46,6 +44,16 @@ func ServicePort(port int) ServiceOpt {
 	}
 }
 
+// ServiceShutdownGracetime bounds the shutdown that Start triggers on its
+// own when ctx is done: it becomes the deadline for stopping every
+// registered Component and for a graceful GracefulStop, after which any
+// remaining in-flight RPCs are forcibly closed via grpc.Server.Stop rather
+// than waiting on GracefulStop indefinitely.
+//
+// It has no effect on a shutdown driven by an explicit call to Stop(ctx)
+// with its own ctx — that ctx's deadline, if any, is used as-is.
+//
+// The default is 1 second.
 func ServiceShutdownGracetime(t time.Duration) ServiceOpt {
 	return func(s *serviceOpts) {
 		s.shutdownGracetime = t

@@ -1,7 +1,7 @@
 package http
 
-// Component defines long-running services within the http service
-// that require graceful shutdown when service shuts down.
-type Component interface {
-	Stop()
-}
+import "github.com/lnashier/goarc/v2"
+
+// Component is an alias for goarc.Component: long-running work the service
+// runs alongside itself and must stop when the service stops.
+type Component = goarc.Component

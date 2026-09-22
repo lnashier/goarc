@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/lnashier/goarc"
-	goarchttp "github.com/lnashier/goarc/http"
-	"github.com/lnashier/goarc/x/buildinfo"
-	"github.com/lnashier/goarc/x/config"
-	"github.com/lnashier/goarc/x/health"
+	"github.com/lnashier/goarc/v2"
+	goarchttp "github.com/lnashier/goarc/v2/http"
+	"github.com/lnashier/goarc/v2/x/buildinfo"
+	"github.com/lnashier/goarc/v2/x/config"
+	"github.com/lnashier/goarc/v2/x/health"
 	"time"
 	"websocketapp/internal/app"
 )

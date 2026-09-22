@@ -1,7 +1,7 @@
 package app
 
 import (
-	goarcgrpc "github.com/lnashier/goarc/grpc"
+	goarcgrpc "github.com/lnashier/goarc/v2/grpc"
 	"grpcservice/internal/app/echo"
 )
 

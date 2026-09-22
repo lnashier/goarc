@@ -3,7 +3,7 @@ package http
 import (
 	"errors"
 	"fmt"
-	xjson "github.com/lnashier/goarc/x/json"
+	xjson "github.com/lnashier/goarc/v2/x/json"
 	"net/http"
 )
 
@@ -76,9 +76,10 @@ func NewErrorf(status int, cause error, message string, args ...any) *Error {
 	}
 }
 
+// Is4xx reports whether err is, or wraps, an *Error with a 4xx status.
 func Is4xx(err error) (int, bool) {
-	herr, ok := err.(*Error)
-	if !ok {
+	var herr *Error
+	if !errors.As(err, &herr) {
 		return 0, false
 	}
 	return herr.Status, herr.Status >= 400 && herr.Status < 500

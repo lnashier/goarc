@@ -1,6 +1,7 @@
 package echo
 
 import (
+	"context"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"math"
@@ -14,10 +15,16 @@ type Echoer struct {
 	Msgs             chan *Message
 	ConnClosed       chan struct{}
 	ServiceGoingAway chan struct{}
+
+	stopOnce sync.Once
 }
 
-func (e *Echoer) Stop() {
-	close(e.ServiceGoingAway)
+// Stop implements goarc.Component. Safe to call more than once.
+func (e *Echoer) Stop(context.Context) error {
+	e.stopOnce.Do(func() {
+		close(e.ServiceGoingAway)
+	})
+	return nil
 }
 
 type Message struct {

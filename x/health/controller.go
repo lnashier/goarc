@@ -1,11 +1,16 @@
 package health
 
 import (
-	xhttp "github.com/lnashier/goarc/x/http"
+	"context"
+	"sync"
+
+	xhttp "github.com/lnashier/goarc/v2/x/http"
 )
 
+// Controller implements goarc.Component.
 type Controller struct {
-	done chan struct{}
+	done     chan struct{}
+	stopOnce sync.Once
 }
 
 func New() *Controller {
@@ -14,8 +19,13 @@ func New() *Controller {
 
 // Stop sets ready-handler status to NotFound.
 // live-handler status remains OK until service completely goes away.
-func (hc *Controller) Stop() {
-	close(hc.done)
+//
+// Stop is safe to call more than once.
+func (hc *Controller) Stop(context.Context) error {
+	hc.stopOnce.Do(func() {
+		close(hc.done)
+	})
+	return nil
 }
 
 // Live handles the HTTP request for the live endpoint,

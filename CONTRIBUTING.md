@@ -44,6 +44,21 @@ When contributing code, please follow these guidelines:
 9. **Merge**: Once your pull request has been approved and passes any required tests, it will be merged into the main
    codebase. Congratulations on your contribution!
 
+## Testing & CI
+
+Every package is expected to carry its own `_test.go` coverage using the standard library
+(`testing`, `net/http/httptest`, `google.golang.org/grpc/test/bufconn`, etc.) — no new test
+framework dependency without discussion first.
+
+CI runs on every push and pull request against `main` and `v2`, and must be green before merge:
+
+- `go build ./...`
+- `go vet ./...`
+- `golangci-lint run` (config in `.golangci.yml`)
+- `go test ./... -race -cover`
+
+New functionality or bug fixes should come with a test that would have failed before the change.
+
 Thank you for taking the time to contribute to GoArc. Your contributions help make the project better for everyone. If
 you have any questions or need assistance with contributing, don't hesitate to reach out to the project maintainers.
 

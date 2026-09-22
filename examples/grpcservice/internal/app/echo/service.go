@@ -3,7 +3,7 @@ package echo
 import (
 	"context"
 	"fmt"
-	goarcgrpc "github.com/lnashier/goarc/grpc"
+	goarcgrpc "github.com/lnashier/goarc/v2/grpc"
 	pb "grpcservice/internal/proto/echo"
 	"io"
 	"strings"

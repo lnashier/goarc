@@ -4,20 +4,30 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/urfave/negroni"
+	"net"
 	"net/http"
 	"strings"
-	"time"
+	"sync"
+
+	"github.com/gorilla/mux"
+	"github.com/urfave/negroni"
 )
 
+// Service is an HTTP goarc.Service, backed by gorilla/mux for routing and
+// negroni for middleware chains.
 type Service struct {
 	opts       serviceOpts
 	httpServer *http.Server
 	router     *mux.Router
 	preempt    *negroni.Negroni
-	exitCh     chan struct{}
 	components []Component
+
+	stopped  chan struct{}
+	stopOnce sync.Once
+	stopErr  error
+
+	addrMu sync.Mutex
+	addr   string
 }
 
 func NewService(opt ...ServiceOpt) *Service {
@@ -32,10 +42,9 @@ func NewService(opt ...ServiceOpt) *Service {
 			Addr:    fmt.Sprintf(":%d", opts.port),
 			Handler: preempt,
 		},
-		preempt:    preempt,
-		router:     mux.NewRouter(),
-		exitCh:     make(chan struct{}),
-		components: make([]Component, 0),
+		preempt: preempt,
+		router:  mux.NewRouter(),
+		stopped: make(chan struct{}),
 	}
 
 	// Configure app(s); if provided
@@ -48,28 +57,85 @@ func NewService(opt ...ServiceOpt) *Service {
 	return s
 }
 
-// Start starts the service
-// Routes should be registered before calling start
-func (s *Service) Start() error {
+// Start implements goarc.Service. Routes should be registered before
+// calling Start.
+//
+// Start blocks until the server stops — either because ctx is done (Start
+// then shuts down on its own, within ServiceShutdownGracetime) or because
+// Stop was called directly.
+func (s *Service) Start(ctx context.Context) error {
 	s.preempt.UseHandler(s.router)
-	err := s.httpServer.ListenAndServe()
-	if !errors.Is(err, http.ErrServerClosed) {
+
+	lis, err := net.Listen("tcp", s.httpServer.Addr)
+	if err != nil {
 		return err
 	}
-	return nil
+	s.setAddr(lis.Addr().String())
+
+	startDone := make(chan struct{})
+	defer close(startDone)
+
+	go func() {
+		select {
+		case <-ctx.Done():
+			stopCtx, cancel := context.WithTimeout(context.Background(), s.opts.shutdownGracetime)
+			defer cancel()
+			_ = s.stop(stopCtx)
+		case <-s.stopped:
+		case <-startDone:
+		}
+	}()
+
+	err = s.httpServer.Serve(lis)
+	if errors.Is(err, http.ErrServerClosed) {
+		return nil
+	}
+	return err
 }
 
-// Stop gracefully shuts down the service without interrupting any
-// active connections. Stop works by first calling all long-running registered
-// components, and then calling underlying http-server Shutdown.
-func (s *Service) Stop() error {
-	close(s.exitCh)
-	// Stop any long-running components within the service
-	for _, comp := range s.components {
-		comp.Stop()
-	}
-	time.Sleep(s.opts.shutdownGracetime)
-	return s.httpServer.Shutdown(context.Background())
+// Addr returns the address the service is listening on, once Start has
+// bound its listener; empty otherwise. It is primarily useful with
+// ServicePort(0), which asks the OS to choose a free port — for example in
+// tests, to avoid hardcoding a port that might already be in use.
+func (s *Service) Addr() string {
+	s.addrMu.Lock()
+	defer s.addrMu.Unlock()
+	return s.addr
+}
+
+func (s *Service) setAddr(addr string) {
+	s.addrMu.Lock()
+	s.addr = addr
+	s.addrMu.Unlock()
+}
+
+// Stop implements goarc.Service: it gracefully shuts down the service
+// without interrupting active connections, first stopping every registered
+// Component, then the underlying http.Server, both bounded by ctx.
+//
+// Stop is safe to call before Start, concurrently with a running Start, or
+// more than once — only the first call does any work; later calls return
+// its result.
+func (s *Service) Stop(ctx context.Context) error {
+	return s.stop(ctx)
+}
+
+func (s *Service) stop(ctx context.Context) error {
+	s.stopOnce.Do(func() {
+		close(s.stopped)
+
+		var errs []error
+		for _, comp := range s.components {
+			if err := comp.Stop(ctx); err != nil {
+				errs = append(errs, err)
+			}
+		}
+		if err := s.httpServer.Shutdown(ctx); err != nil {
+			errs = append(errs, err)
+		}
+		s.stopErr = errors.Join(errs...)
+	})
+	return s.stopErr
 }
 
 // Register registers a route-handler (http.Handler) for a given path and http.Method.

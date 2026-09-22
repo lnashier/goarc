@@ -3,32 +3,30 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/lnashier/goarc"
-	xtime "github.com/lnashier/goarc/x/time"
 	"time"
+
+	"github.com/lnashier/goarc/v2"
+	xtime "github.com/lnashier/goarc/v2/x/time"
 )
 
-type Service struct {
-	ctx    context.Context
-	cancel context.CancelFunc
-}
+type Service struct{}
 
-func (s *Service) Start() error {
+// Start must self-terminate when ctx is done — here that's automatic,
+// since the only blocking call is SleepWithContext, which already returns
+// as soon as ctx is done.
+func (s *Service) Start(ctx context.Context) error {
 	fmt.Println("Starting service")
 	defer fmt.Println("Service done!")
 
-	s.ctx, s.cancel = context.WithCancel(context.Background())
-
 	fmt.Println("Doing some random work")
-	xtime.SleepWithContext(s.ctx, time.Duration(10)*time.Second)
+	xtime.SleepWithContext(ctx, time.Duration(10)*time.Second)
 	fmt.Println("Done with random work")
 
 	return nil
 }
 
-func (s *Service) Stop() error {
+func (s *Service) Stop(context.Context) error {
 	fmt.Println("Stopping service")
-	s.cancel()
 	return nil
 }
 

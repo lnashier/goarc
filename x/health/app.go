@@ -1,8 +1,8 @@
 package health
 
 import (
-	shttp "github.com/lnashier/goarc/http"
-	xhttp "github.com/lnashier/goarc/x/http"
+	shttp "github.com/lnashier/goarc/v2/http"
+	xhttp "github.com/lnashier/goarc/v2/x/http"
 	"net/http"
 )
 

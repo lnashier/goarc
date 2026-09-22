@@ -1,7 +1,7 @@
 package buildinfo
 
 import (
-	shttp "github.com/lnashier/goarc/http"
+	shttp "github.com/lnashier/goarc/v2/http"
 	"net/http"
 )
 

@@ -2,8 +2,8 @@ package app
 
 import (
 	"github.com/gorilla/websocket"
-	goarchttp "github.com/lnashier/goarc/http"
-	xhttp "github.com/lnashier/goarc/x/http"
+	goarchttp "github.com/lnashier/goarc/v2/http"
+	xhttp "github.com/lnashier/goarc/v2/x/http"
 	"net/http"
 	"time"
 	"websocketapp/internal/app/echo"

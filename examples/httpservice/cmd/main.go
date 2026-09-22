@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/lnashier/goarc"
-	goarchttp "github.com/lnashier/goarc/http"
-	"github.com/lnashier/goarc/x/health"
-	xhttp "github.com/lnashier/goarc/x/http"
+	"github.com/lnashier/goarc/v2"
+	goarchttp "github.com/lnashier/goarc/v2/http"
+	"github.com/lnashier/goarc/v2/x/health"
+	xhttp "github.com/lnashier/goarc/v2/x/http"
 	"httpservice/internal/app"
 	"net/http"
 	"time"

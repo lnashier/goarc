@@ -2,8 +2,8 @@ package echo
 
 import (
 	"errors"
-	goarchttp "github.com/lnashier/goarc/http"
-	xhttp "github.com/lnashier/goarc/x/http"
+	goarchttp "github.com/lnashier/goarc/v2/http"
+	xhttp "github.com/lnashier/goarc/v2/x/http"
 	"net/http"
 )
 
@@ -12,7 +12,7 @@ func App(srv *goarchttp.Service) error {
 		echoReq := &Request{}
 		err := xhttp.RequestParse(req, echoReq)
 		if err != nil {
-			return nil, xhttp.BadRequestf(err, err.Error())
+			return nil, xhttp.BadRequestf(err, "%s", err.Error())
 		}
 
 		return &Response{

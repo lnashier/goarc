@@ -36,6 +36,15 @@ func ServicePort(port int) ServiceOpt {
 	}
 }
 
+// ServiceShutdownGracetime bounds the shutdown that Start triggers on its
+// own when ctx is done: it becomes the deadline for stopping every
+// registered Component and for http.Server.Shutdown, i.e. how long
+// in-flight requests are given to finish before being forcibly closed.
+//
+// It has no effect on a shutdown driven by an explicit call to Stop(ctx)
+// with its own ctx — that ctx's deadline, if any, is used as-is.
+//
+// The default is 1 second.
 func ServiceShutdownGracetime(t time.Duration) ServiceOpt {
 	return func(s *serviceOpts) {
 		s.shutdownGracetime = t

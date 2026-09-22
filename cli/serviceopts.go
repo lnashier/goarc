@@ -9,11 +9,12 @@ var defaultServiceOpts = serviceOpts{
 
 type serviceOpts struct {
 	name string
+	args []string
 	apps []func(*Service) error
 }
 
-func (s *serviceOpts) apply(opts []ServiceOpt) {
-	for _, o := range opts {
+func (s *serviceOpts) apply(opt ...ServiceOpt) {
+	for _, o := range opt {
 		o(s)
 	}
 }
@@ -21,6 +22,16 @@ func (s *serviceOpts) apply(opts []ServiceOpt) {
 func ServiceName(name string) ServiceOpt {
 	return func(s *serviceOpts) {
 		s.name = name
+	}
+}
+
+// ServiceArgs overrides the arguments the root command parses, instead of
+// the process's own os.Args[1:]. Primarily useful for tests, and for
+// embedding a cli.Service where argument parsing shouldn't come from the
+// process's real command line.
+func ServiceArgs(args []string) ServiceOpt {
+	return func(s *serviceOpts) {
+		s.args = args
 	}
 }
 

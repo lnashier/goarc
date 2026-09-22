@@ -5,11 +5,10 @@ import (
 	"time"
 )
 
+// SleepWithContext sleeps for d, or until ctx is done, whichever comes first.
 func SleepWithContext(ctx context.Context, d time.Duration) {
 	select {
 	case <-ctx.Done():
-		break
 	case <-time.After(d):
-		break
 	}
 }

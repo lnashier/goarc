@@ -3,27 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/lnashier/goarc"
-	xtime "github.com/lnashier/goarc/x/time"
+	"github.com/lnashier/goarc/v2"
+	xtime "github.com/lnashier/goarc/v2/x/time"
 	"time"
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-
 	goarc.Up(
-		goarc.ServiceFunc(
-			// The same function is invoked for both starting and stopping the service.
-			// It's important to note that Start and Stop represent two separate executions
-			// of the same provided function.
-			// Any local variables won't persist across these executions as expected.
-			func(start bool) error {
-				if !start {
-					fmt.Println("Stopping service")
-					cancel()
-					return nil
-				}
-
+		goarc.Func{
+			StartFunc: func(ctx context.Context) error {
 				fmt.Println("Starting service")
 				defer fmt.Println("Service done!")
 
@@ -33,7 +21,11 @@ func main() {
 
 				return nil
 			},
-		),
+			StopFunc: func(context.Context) error {
+				fmt.Println("Stopping service")
+				return nil
+			},
+		},
 		goarc.OnStart(func(err error) {
 			fmt.Println("On Start Err: ", err)
 		}),
