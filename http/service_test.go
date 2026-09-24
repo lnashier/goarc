@@ -199,3 +199,46 @@ func waitDone(t *testing.T, done <-chan error) error {
 		return nil
 	}
 }
+
+func TestServiceHost_BindsToGivenHost(t *testing.T) {
+	svc := NewService(ServiceHost("127.0.0.1"), ServicePort(0))
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	done := make(chan error, 1)
+	go func() { done <- svc.Start(ctx) }()
+
+	addr := waitForAddr(t, svc)
+	if !strings.HasPrefix(addr, "127.0.0.1:") {
+		t.Fatalf("Addr() = %q, want it bound to 127.0.0.1", addr)
+	}
+
+	cancel()
+	if err := waitDone(t, done); err != nil {
+		t.Fatalf("Start() = %v, want nil", err)
+	}
+}
+
+func TestServiceTimeouts_AreAppliedToServer(t *testing.T) {
+	svc := NewService(
+		ServiceReadHeaderTimeout(1*time.Second),
+		ServiceReadTimeout(2*time.Second),
+		ServiceWriteTimeout(3*time.Second),
+		ServiceIdleTimeout(4*time.Second),
+	)
+
+	got := svc.httpServer
+	if got.ReadHeaderTimeout != 1*time.Second || got.ReadTimeout != 2*time.Second ||
+		got.WriteTimeout != 3*time.Second || got.IdleTimeout != 4*time.Second {
+		t.Fatalf("timeouts = %v/%v/%v/%v, want 1s/2s/3s/4s",
+			got.ReadHeaderTimeout, got.ReadTimeout, got.WriteTimeout, got.IdleTimeout)
+	}
+}
+
+func TestServiceTimeouts_DefaultToUnset(t *testing.T) {
+	got := NewService().httpServer
+	if got.ReadHeaderTimeout != 0 || got.ReadTimeout != 0 || got.WriteTimeout != 0 || got.IdleTimeout != 0 {
+		t.Fatalf("default timeouts must be zero (unchanged from before), got %+v", got)
+	}
+}

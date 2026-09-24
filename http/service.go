@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -39,8 +40,12 @@ func NewService(opt ...ServiceOpt) *Service {
 	s := &Service{
 		opts: opts,
 		httpServer: &http.Server{
-			Addr:    fmt.Sprintf(":%d", opts.port),
-			Handler: preempt,
+			Addr:              net.JoinHostPort(opts.host, strconv.Itoa(opts.port)),
+			Handler:           preempt,
+			ReadHeaderTimeout: opts.readHeaderTimeout,
+			ReadTimeout:       opts.readTimeout,
+			WriteTimeout:      opts.writeTimeout,
+			IdleTimeout:       opts.idleTimeout,
 		},
 		preempt: preempt,
 		router:  mux.NewRouter(),

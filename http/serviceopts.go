@@ -13,7 +13,12 @@ var defaultServiceOpts = serviceOpts{
 
 type serviceOpts struct {
 	name              string
+	host              string
 	port              int
+	readHeaderTimeout time.Duration
+	readTimeout       time.Duration
+	writeTimeout      time.Duration
+	idleTimeout       time.Duration
 	shutdownGracetime time.Duration
 	apps              []func(*Service) error
 }
@@ -27,6 +32,52 @@ func (s *serviceOpts) apply(opt ...ServiceOpt) {
 func ServiceName(name string) ServiceOpt {
 	return func(s *serviceOpts) {
 		s.name = name
+	}
+}
+
+// ServiceHost sets the host or IP address the service binds to, e.g.
+// "127.0.0.1" to listen on loopback only. The default is empty, which binds
+// all interfaces.
+func ServiceHost(host string) ServiceOpt {
+	return func(s *serviceOpts) {
+		s.host = host
+	}
+}
+
+// ServiceReadHeaderTimeout sets http.Server.ReadHeaderTimeout, the time
+// allowed to read request headers. Setting it is the main defense against
+// slow-header (Slowloris) clients on a public listener. The default, zero,
+// means no timeout.
+func ServiceReadHeaderTimeout(d time.Duration) ServiceOpt {
+	return func(s *serviceOpts) {
+		s.readHeaderTimeout = d
+	}
+}
+
+// ServiceReadTimeout sets http.Server.ReadTimeout, the time allowed to read
+// the entire request including the body. The default, zero, means no timeout.
+func ServiceReadTimeout(d time.Duration) ServiceOpt {
+	return func(s *serviceOpts) {
+		s.readTimeout = d
+	}
+}
+
+// ServiceWriteTimeout sets http.Server.WriteTimeout, the time allowed to
+// write the response. The default, zero, means no timeout. Do not set it on
+// services that stream long-lived responses or upgrade connections
+// (e.g. WebSockets).
+func ServiceWriteTimeout(d time.Duration) ServiceOpt {
+	return func(s *serviceOpts) {
+		s.writeTimeout = d
+	}
+}
+
+// ServiceIdleTimeout sets http.Server.IdleTimeout, how long an idle
+// keep-alive connection is kept open. The default, zero, falls back to the
+// read timeout.
+func ServiceIdleTimeout(d time.Duration) ServiceOpt {
+	return func(s *serviceOpts) {
+		s.idleTimeout = d
 	}
 }
 
