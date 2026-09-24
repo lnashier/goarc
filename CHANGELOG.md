@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `http.ServiceHost` — bind the service to a specific host/IP (e.g. `127.0.0.1` to keep a
   metrics or admin listener on loopback). Default is unchanged (all interfaces).
 - `http.ServiceReadHeaderTimeout`, `ServiceReadTimeout`, `ServiceWriteTimeout`,
-  `ServiceIdleTimeout` — set the corresponding `http.Server` timeouts (slow-client protection
+  `ServiceIdleTimeout`, `ServiceMaxHeaderBytes` — set the corresponding `http.Server` timeouts (slow-client protection
   for public listeners). All default to zero, i.e. unchanged behavior. Driven by feedback from
   a downstream project that had to wrap its own `http.Server` to get these.
 - CI workflow (`go build`, `go vet`, `golangci-lint`, `go test -race -cover`, plus a build+vet

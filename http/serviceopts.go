@@ -19,6 +19,7 @@ type serviceOpts struct {
 	readTimeout       time.Duration
 	writeTimeout      time.Duration
 	idleTimeout       time.Duration
+	maxHeaderBytes    int
 	shutdownGracetime time.Duration
 	apps              []func(*Service) error
 }
@@ -78,6 +79,14 @@ func ServiceWriteTimeout(d time.Duration) ServiceOpt {
 func ServiceIdleTimeout(d time.Duration) ServiceOpt {
 	return func(s *serviceOpts) {
 		s.idleTimeout = d
+	}
+}
+
+// ServiceMaxHeaderBytes sets http.Server.MaxHeaderBytes, the maximum size of
+// request headers. The default, zero, uses Go's DefaultMaxHeaderBytes (1 MB).
+func ServiceMaxHeaderBytes(n int) ServiceOpt {
+	return func(s *serviceOpts) {
+		s.maxHeaderBytes = n
 	}
 }
 

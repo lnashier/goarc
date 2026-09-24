@@ -242,3 +242,12 @@ func TestServiceTimeouts_DefaultToUnset(t *testing.T) {
 		t.Fatalf("default timeouts must be zero (unchanged from before), got %+v", got)
 	}
 }
+
+func TestServiceMaxHeaderBytes_IsAppliedToServer(t *testing.T) {
+	if got := NewService(ServiceMaxHeaderBytes(64 << 10)).httpServer.MaxHeaderBytes; got != 64<<10 {
+		t.Fatalf("MaxHeaderBytes = %d, want %d", got, 64<<10)
+	}
+	if got := NewService().httpServer.MaxHeaderBytes; got != 0 {
+		t.Fatalf("default MaxHeaderBytes = %d, want 0 (Go default)", got)
+	}
+}

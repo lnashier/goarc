@@ -46,6 +46,7 @@ func NewService(opt ...ServiceOpt) *Service {
 			ReadTimeout:       opts.readTimeout,
 			WriteTimeout:      opts.writeTimeout,
 			IdleTimeout:       opts.idleTimeout,
+			MaxHeaderBytes:    opts.maxHeaderBytes,
 		},
 		preempt: preempt,
 		router:  mux.NewRouter(),
