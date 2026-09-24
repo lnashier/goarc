@@ -51,7 +51,7 @@ func TestClient_Do_SuccessNoRetry(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("StatusCode = %d, want 200", resp.StatusCode)
 	}
@@ -82,7 +82,7 @@ func TestClient_Do_RetriesOn5xxThenSucceeds(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("StatusCode = %d, want 200", resp.StatusCode)
 	}
@@ -131,7 +131,7 @@ func TestClient_Do_NoRetryByDefault(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusServiceUnavailable {
 		t.Fatalf("StatusCode = %d, want 503", resp.StatusCode)
 	}
@@ -179,7 +179,7 @@ func TestDoDecoded_NoContentIsSuccess(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 }
 
 func TestDoDecoded_EmptyBodyErrorStatusIsStillAnError(t *testing.T) {
@@ -203,7 +203,7 @@ func TestDoDecoded_EmptyBodyErrorStatusIsStillAnError(t *testing.T) {
 func TestDoDecoded_DecodeErrorIsWrapped(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("not json"))
+		_, _ = w.Write([]byte("not json"))
 	}))
 	defer srv.Close()
 
@@ -230,7 +230,7 @@ func TestPostEncodedDecoded_RoundTrips(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if got.Name != "echo:hi" {
 		t.Fatalf("Name = %q, want %q", got.Name, "echo:hi")
 	}
@@ -264,7 +264,7 @@ func TestClient_Do_RewindsBodyOnRetry(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if len(bodies) != 2 || bodies[0] != "payload" || bodies[1] != "payload" {
 		t.Fatalf("bodies seen by server = %v, want [\"payload\" \"payload\"]", bodies)

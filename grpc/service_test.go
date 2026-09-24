@@ -46,7 +46,7 @@ func TestService_RegisterServiceAndServe(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	client := healthpb.NewHealthClient(conn)
 	reqCtx, reqCancel := context.WithTimeout(context.Background(), 2*time.Second)
@@ -150,7 +150,7 @@ func TestService_Stop_ForcesClosedWhenGracefulStopExceedsDeadline(t *testing.T) 
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer conn.Close()
+	defer func() { _ = conn.Close() }()
 
 	stopCtx, stopCancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer stopCancel()
@@ -164,7 +164,7 @@ func TestService_Stop_ForcesClosedWhenGracefulStopExceedsDeadline(t *testing.T) 
 	}
 
 	cancel()
-	waitDone(t, done)
+	_ = waitDone(t, done)
 }
 
 func waitForAddr(t *testing.T, svc *Service) string {

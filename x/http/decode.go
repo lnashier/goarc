@@ -16,7 +16,7 @@ type RequestValidation interface {
 // RequestDecode decodes a model from the http.Request body.
 // It closes http.Request body after reading.
 func RequestDecode(req *http.Request, v any) error {
-	defer req.Body.Close()
+	defer func() { _ = req.Body.Close() }()
 	return json.NewDecoder(req.Body).Decode(v)
 }
 

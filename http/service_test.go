@@ -29,7 +29,7 @@ func TestService_RegisterAndServe(t *testing.T) {
 	svc := NewService(ServicePort(0))
 	svc.Register("/hello", nethttp.MethodGet, nethttp.HandlerFunc(func(w nethttp.ResponseWriter, r *nethttp.Request) {
 		w.WriteHeader(nethttp.StatusOK)
-		w.Write([]byte("world"))
+		_, _ = w.Write([]byte("world"))
 	}))
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -44,7 +44,7 @@ func TestService_RegisterAndServe(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body, _ := io.ReadAll(resp.Body)
 	if string(body) != "world" {

@@ -10,7 +10,7 @@ import (
 type signup struct {
 	Email string `json:"email" validate:"required"`
 	Name  string `json:"name"`
-	age   int    `validate:"required"` // unexported: must never be inspected
+	age   int    `validate:"required"` //nolint:unused // unexported: must never be inspected
 }
 
 func (s *signup) Validate(*http.Request) error { return nil }

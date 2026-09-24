@@ -43,10 +43,10 @@ func TestParseEnv_ReadsENVVariable(t *testing.T) {
 
 func TestParseEnv_DefaultsToLocalWhenUnset(t *testing.T) {
 	orig, had := os.LookupEnv("ENV")
-	os.Unsetenv("ENV")
+	_ = os.Unsetenv("ENV")
 	t.Cleanup(func() {
 		if had {
-			os.Setenv("ENV", orig)
+			_ = os.Setenv("ENV", orig)
 		}
 	})
 

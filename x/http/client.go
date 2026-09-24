@@ -130,7 +130,7 @@ func (c *Client) DoDecoded(req *Request, result any, retry *Retry) (*http.Respon
 		return nil, err
 	}
 
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -202,6 +202,6 @@ func (c *Client) PatchEncodedDecoded(ctx context.Context, path string, header ht
 }
 
 func drainBody(b io.ReadCloser) {
-	defer b.Close()
-	io.Copy(io.Discard, b)
+	defer func() { _ = b.Close() }()
+	_, _ = io.Copy(io.Discard, b)
 }

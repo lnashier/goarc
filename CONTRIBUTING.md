@@ -57,6 +57,16 @@ CI runs on every push and pull request against `main` and `v2`, and must be gree
 - `golangci-lint run` (config in `.golangci.yml`)
 - `go test ./... -race -cover`
 
+Run the same checks locally before pushing:
+
+```shell
+make check
+```
+
+This needs [golangci-lint v2](https://golangci-lint.run/welcome/install/) (`brew install golangci-lint`);
+v1 cannot read `.golangci.yml`. Individual targets (`make lint`, `make test`, `make examples`, ...)
+are also available.
+
 New functionality or bug fixes should come with a test that would have failed before the change.
 
 Thank you for taking the time to contribute to GoArc. Your contributions help make the project better for everyone. If
