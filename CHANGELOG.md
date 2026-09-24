@@ -129,6 +129,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- `x/http` `Client.Do`: the wait between retries was a plain `time.Sleep` that ignored the
+  request's context, so a cancelled or expired context could still block for the full backoff
+  (up to `WaitMax` per retry). The wait now returns immediately with an error wrapping the
+  context's error. Reported by a downstream project.
+
 - **`x/health.Controller.Stop` is now idempotent.** V1's `Stop()` called `close(hc.done)`
   directly with no guard — calling it twice (now an explicit requirement of the `Component`
   contract) would panic on the second call. Guarded with `sync.Once`.

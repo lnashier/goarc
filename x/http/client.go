@@ -111,7 +111,15 @@ func (c *Client) Do(req *Request, retry *Retry) (*http.Response, error) {
 
 		wait := retry.Backoff(retry.WaitMin, retry.WaitMax, retry.Max-remain, resp)
 		retry.OnTry(wait, retry.Max-remain, retryErr)
-		time.Sleep(wait)
+		// Wait out the backoff, but give up as soon as the request's context is
+		// done rather than sleeping through a cancelled or expired context.
+		timer := time.NewTimer(wait)
+		select {
+		case <-req.Context().Done():
+			timer.Stop()
+			return nil, fmt.Errorf("%s %s aborted while waiting to retry: %w", req.Method, req.URL, req.Context().Err())
+		case <-timer.C:
+		}
 	}
 	retry.OnTry(0, retry.Max-remain, retryErr)
 	if retryErr != nil {

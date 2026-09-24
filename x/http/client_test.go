@@ -270,3 +270,32 @@ func TestClient_Do_RewindsBodyOnRetry(t *testing.T) {
 		t.Fatalf("bodies seen by server = %v, want [\"payload\" \"payload\"]", bodies)
 	}
 }
+
+func TestClient_Do_RetryWaitHonorsContextCancellation(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusServiceUnavailable)
+	}))
+	defer srv.Close()
+
+	c := NewClient(WithHost(srv.URL))
+	retry := &Retry{
+		WaitMin: time.Hour, // would hang the test if the wait ignored ctx
+		WaitMax: time.Hour,
+		Max:     3,
+		Policy:  DefaultRetryPolicy,
+		Backoff: func(min, max time.Duration, attempt int, resp *http.Response) time.Duration { return time.Hour },
+		OnTry:   func(time.Duration, int, error) {},
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	start := time.Now()
+	_, err := c.Get(ctx, "/", http.Header{}, retry)
+	if elapsed := time.Since(start); elapsed > 5*time.Second {
+		t.Fatalf("Get() took %v, want it to return soon after ctx expiry", elapsed)
+	}
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("Get() error = %v, want it to wrap context.DeadlineExceeded", err)
+	}
+}
