@@ -69,7 +69,7 @@ func assertStatus(t *testing.T, url string, want int) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != want {
 		t.Fatalf("GET %s = %d, want %d", url, resp.StatusCode, want)
 	}

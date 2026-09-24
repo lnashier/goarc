@@ -159,7 +159,7 @@ func TestDoDecoded_SuccessOn2xxVariants(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			defer resp.Body.Close()
+			defer func() { _ = resp.Body.Close() }()
 			if got.Name != "ok" {
 				t.Fatalf("Name = %q, want %q", got.Name, "ok")
 			}

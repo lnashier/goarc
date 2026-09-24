@@ -66,7 +66,7 @@ func New(r ...Reporter) *Handler {
 func (c *Handler) ServeHTTP(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Add("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write(xjson.Marshal(c.report()))
+	_, _ = w.Write(xjson.Marshal(c.report()))
 }
 
 func (c *Handler) report() Report {

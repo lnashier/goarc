@@ -76,10 +76,10 @@ type CustomHandler struct {
 func (h *CustomHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	result, err := h.Route(r)
 	if err != nil {
-		xhttp.ConvertError(err).WriteJSON(w)
+		_, _ = xhttp.ConvertError(err).WriteJSON(w)
 		return
 	}
 	w.Header().Set("Content-Type", h.ContentType)
 	w.WriteHeader(http.StatusOK)
-	w.Write(result.([]byte))
+	_, _ = w.Write(result.([]byte))
 }

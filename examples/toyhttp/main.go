@@ -18,7 +18,7 @@ func main() {
 			// BYO http.Handler
 			srv.Register("/toys/byo", http.MethodGet, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte("Hello World!"))
+				_, _ = w.Write([]byte("Hello World!"))
 			}))
 
 			// Use pre-assembled http.Handler to work with JSON response type

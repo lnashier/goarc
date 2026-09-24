@@ -19,7 +19,7 @@ func Example() {
 		goarchttp.ServicePort(0), // 0: let the OS choose a free port
 		goarchttp.App(func(s *goarchttp.Service) error {
 			s.Register("/hello", nethttp.MethodGet, nethttp.HandlerFunc(func(w nethttp.ResponseWriter, r *nethttp.Request) {
-				w.Write([]byte("world"))
+				_, _ = w.Write([]byte("world"))
 			}))
 			return nil
 		}),

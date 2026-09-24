@@ -28,7 +28,7 @@ func main() {
 								func(srv *goarchttp.Service) error {
 									srv.Register("/service1/toys/1", http.MethodGet, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 										w.WriteHeader(http.StatusOK)
-										w.Write([]byte("Hello World from Service1!"))
+										_, _ = w.Write([]byte("Hello World from Service1!"))
 									}))
 
 									srv.Register("/service1/toys/2", http.MethodGet, xhttp.JSONHandler(func(r *http.Request) (any, error) {
@@ -57,7 +57,7 @@ func main() {
 								func(srv *goarchttp.Service) error {
 									srv.Register("/service2/toys/1", http.MethodGet, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 										w.WriteHeader(http.StatusOK)
-										w.Write([]byte("Hello World from Service2!"))
+										_, _ = w.Write([]byte("Hello World from Service2!"))
 									}))
 
 									srv.Register("/service2/toys/2", http.MethodGet, xhttp.JSONHandler(func(r *http.Request) (any, error) {

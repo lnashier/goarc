@@ -22,7 +22,7 @@ func Example() {
 		fmt.Println("error:", err)
 		return
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	fmt.Println(result["hello"])
 	// Output:

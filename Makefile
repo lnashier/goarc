@@ -9,10 +9,15 @@ build:
 vet:
 	go vet ./...
 
+# Lints the root module and every example module (each is its own module).
 # Requires golangci-lint v2 (v1 cannot read .golangci.yml):
 #   brew install golangci-lint
 lint:
 	golangci-lint run
+	@set -e; for d in examples/*/; do \
+		echo "== lint $$d =="; \
+		(cd $$d && golangci-lint run); \
+	done
 
 test:
 	go test ./... -race

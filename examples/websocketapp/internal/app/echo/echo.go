@@ -77,7 +77,7 @@ func (e *Echoer) send(wg *sync.WaitGroup) {
 	for {
 		select {
 		case <-e.ServiceGoingAway:
-			e.Conn.WriteControl(websocket.CloseMessage, nil, time.Now().Add(writeWait))
+			_ = e.Conn.WriteControl(websocket.CloseMessage, nil, time.Now().Add(writeWait))
 			return
 		case <-e.ConnClosed:
 			return
@@ -130,7 +130,7 @@ func (e *Echoer) pingPong(wg *sync.WaitGroup) {
 				return
 			}
 			if pingCounter > maxPings {
-				e.Conn.WriteControl(websocket.CloseMessage, nil, time.Now().Add(writeWait))
+				_ = e.Conn.WriteControl(websocket.CloseMessage, nil, time.Now().Add(writeWait))
 				return
 			}
 		}
