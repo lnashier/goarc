@@ -45,9 +45,11 @@ jobs:
           go-version: stable
           cache: true
 
-      - uses: golangci/golangci-lint-action@v6
+      # v2 of golangci-lint is required: v1.x binaries are built with an older
+      # Go and refuse to load a module whose go directive is newer.
+      - uses: golangci/golangci-lint-action@v8
         with:
-          args: --timeout=5m
+          version: latest
 
   examples:
     name: examples build
